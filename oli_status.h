@@ -1,18 +1,20 @@
 const char PAGE_oli_status[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 <body>
 <h2>Oli Status</h2>
     <fieldset>
     <legend>Status</legend>  
-        Dinsdag 12:53
+        %DATE_TIME%
         <br><br>
-        Verbonden aan het SSID van het thuis netwerk &nbsp;&nbsp;&nbsp;&nbsp; OF
-        &nbsp;&nbsp;&nbsp;&nbsp;Verbonden via het Oli WiFi netwerk
+        %CONNECTED_TO%
         <br><br>
-        Huidige kleur: rood
+        %COLOR%
         <br>
-        Intensiteit: 50%
+        %INTENSITEIT%
     </fieldset>  
     <br><br>
     <fieldset>

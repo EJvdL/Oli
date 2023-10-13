@@ -26,7 +26,7 @@ bool SettingsStore() {
   mvUserSettings.signature = SETTINGS_SIGNATURE;              // save the data with our signature
   EEPROM.put(mvEEAddress, mvUserSettings);                    // save new data in EEPROM, put only updates the bytes that differ from the bytes already in EEPROM
 #ifdef ESP8266
-  return(EEPROM.commit())
+  return(EEPROM.commit());
 #endif
 #ifdef ARDUINO_AVR_PRO
   return (true);
@@ -38,7 +38,7 @@ bool SettingsClear() {
     EEPROM.write(i, 255);
   }
 #ifdef ESP8266
-  return(EEPROM.commit())
+  return(EEPROM.commit());
 #endif
 #ifdef ARDUINO_AVR_PRO
   return (true);
