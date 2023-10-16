@@ -7,7 +7,6 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
 <body>
 <h2>Oli Status</h2>
     <fieldset>
-    <legend>Status</legend>  
         %DATE_TIME%
         <br><br>
         %CONNECTED_TO%

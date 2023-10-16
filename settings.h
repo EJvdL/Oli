@@ -1,12 +1,17 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <Arduino.h>
 #include <EEPROM.h>                                           // used for storing user preferences in non-volatile memory     
 #include <FastLED.h>
 #include "RTClib.h"
 
 #define MAX_SECURITY_LENGTH  (32)
+
+void  SettingsInit();
+bool  SettingsStore();
+bool  SettingsClear();
+bool  SettingsValid();
+void  SettingsDump();
 
 /*
   Structure to hold the user preferences. 
@@ -111,8 +116,4 @@ typedef struct UserSettings {
 
 extern UserSettings_t  mvUserSettings;                        // variable of type UserSettings_t holding the default or the EEPROM stored user settings
 
-bool SettingsInit();
-bool SettingsStore();
-bool SettingsClear();
-bool SettingsValid();
 #endif

@@ -15,8 +15,8 @@ const char PAGE_oli_config[] PROGMEM = R"=====(
     <br><br>
     <fieldset>
     <legend>Wijzig Oli password [optioneel]</legend><br>
-        <label for="pwd">Password</label><br>
-        <input type="password" id="pwd" name="pwd">
+        <label for="oli-pwd">Password</label><br>
+        <input type="password" minlength="8" maxlength="32" id="oli-pwd" name="oli-pwd">
     </fieldset>  
     <br><br>
     <fieldset>
@@ -24,7 +24,7 @@ const char PAGE_oli_config[] PROGMEM = R"=====(
         <label for="ssid">SSID van het thuis netwerk</label><br>
         <input type="text" id="ssid" name="ssid"><br><br>
         <label for="pwd">Password van thuis netwerk</label><br>
-        <input type="password" id="pwd" name="pwd"><br>
+        <input type="password" minlength="8" maxlength="32" id="pwd" name="pwd"><br>
     </fieldset>
     <br><br>    
     <input type="submit">  
