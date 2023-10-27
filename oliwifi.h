@@ -1,10 +1,16 @@
 #ifndef OLIWIFI_H
 #define OLIWIFI_H
 
-#include <ESP8266mDNS.h>
 #include "secure.h"
 
-void oliWiFiHandleWiFi();
-void oliWiFiStopAP();
+void  oliWiFiInit();
+void  oliWiFiHandleWiFi();
+// void  oliWiFiStartAP();
+// void  oliWiFiStopAP();
+// void  oliWiFiStartSTA();
+// void  oliWiFiStopSTA();
+const char * oliWiFigetStatus();
+const char * oliWiFigetSsid();
+String oliWiFigetIP();
 
 #endif

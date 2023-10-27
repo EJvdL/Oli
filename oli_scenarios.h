@@ -6,7 +6,7 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
 </head>
 <body>
 <h2>Oli Scenarios</h2>
-  <form action="/submitConfig" method="post" target="_self">
+  <form action="/submitScenario" method="post" target="_self">
     <fieldset>
     <legend>Maandag</legend>  
         <input type="time" id="tijdma1" name="tijdma1" value="06:32" style="width: 5em;">

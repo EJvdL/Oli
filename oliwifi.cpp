@@ -1,102 +1,184 @@
-#include "user_interface.h"
+#include "IPAddress.h"
+#include <ESP8266mDNS.h>
 #include "settings.h"
 #include "oliwifi.h"
 
-#define WIFI_RETRY_TIME (5 * 60 * 1000)
+
+#define WIFI_RETRY_TIME (1 * 60 * 1000)
+#define WIFI_CONNECT_TO (30000)
+
+const char* oli_network  = "Verbonden aan het Oli WiFi netwerk ";
+const char* home_network = "Verbonden aan het thuis netwerk ";
+
 
 bool      mvAP_active  = false;
 bool      mvSTA_active = false;
-long int  mvConnectTime = millis() - WIFI_RETRY_TIME;
+long int  mvConnectTime = 0;
 
-
-void oliWiFiStopAP() {
-  if (mvAP_active == true) {
-    Serial.println(F("Stop AP-mode"));
-    WiFi.softAPdisconnect(true);
-    WiFi.disconnect();
-    mvAP_active = false;
-  }
-}
-
-void oliWiFiStopSTA() {
-  if (mvSTA_active == true) {
-    Serial.println(F("Stop STA-mode"));
-    WiFi.disconnect();
-    mvSTA_active = false;
-  }
-}
-
-void oliWiFiStartAP() {
-  Serial.println(F("Start AP-mode"));
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
-
-  IPAddress IP = WiFi.softAPIP();
-  Serial.print(F("AP IP address: "));
-  Serial.println(IP);
+void oliWiFiInit() {
+  WiFi.mode(WIFI_AP_STA);
 
   if (MDNS.begin(oli_mdns)) {
     Serial.print(F("MDNS on: ")); Serial.print(oli_mdns); Serial.println(F(".local"));
-  }
-  Serial.println(F("AP-mode"));
-  mvAP_active = true;
+  } else {
+    Serial.println("MDNS not started");
+  }  
+  mvConnectTime = millis();
 }
 
-void oliWiFiStartSTA() {
-  Serial.println(F("Start STA-mode"));
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(mvUserSettings.userSSID, mvUserSettings.userPassword);
-  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println(F("STA connect failed"));
-    mvSTA_active = false;
-    oliWiFiStartAP();
-    mvConnectTime = millis();    //startTimer
+// Both STA and AP can be active. 
+// The status returns STA if both are active.
+const char * oliWiFigetStatus() {
+  if (mvSTA_active == true) {
+    return (home_network);
   } else {
-    Serial.println(F("STA-mode"));
-    mvSTA_active = true;
+    return (oli_network);
+  }
+}
+
+const char * oliWiFigetSsid() {
+  Serial.println("getSSID");
+
+  if (WiFi.status() == WL_CONNECTED) {  
+    return (mvUserSettings.userSSID);
+  } else {
+    Serial.println("kan niet goed werken");
+    return("");
+  }
+}
+
+String oliWiFigetIP() {
+  Serial.println("getIP");
+  if (WiFi.status() == WL_CONNECTED) {  
+    return (WiFi.localIP().toString());
+  } else {
+    return (WiFi.softAPIP().toString());
   }
 }
 
 // If STA credentials are available try to connect to WiFi network else start AP mode
-// If connection to WiFi network not possible start WiFi AP mode for WIFI_RETRY_MINUTES minutes
-// If connection to WiFi network is lost, reconnect
-// Repeat again and again....
+// If connection to WiFi network not possible start WiFi AP mode
+// Repeat if connection to WiFi network is lost
+// Repeat after WIFI_RETRY_MINUTES minutes
 void oliWiFiHandleWiFi() {
+  MDNS.update();
 
-  // case: STA
-  if (mvSTA_active == true) {
-    if (WiFi.status() != WL_CONNECTED) {  
-      oliWiFiStopSTA();
-      oliWiFiStartSTA();
+  if (mvAP_active==false && mvSTA_active==false) {
+    // initial state
+    Serial.println("Initial state");
+    if (strlen(mvUserSettings.userSSID) != 0 && strlen(mvUserSettings.userPassword) != 0) {
+      // STA credentials available
+      Serial.println("STA credentials available");
+
+      WiFi.begin(mvUserSettings.userSSID, mvUserSettings.userPassword);
+      if (WiFi.waitForConnectResult(WIFI_CONNECT_TO) == WL_CONNECTED) {
+        mvSTA_active = true;
+        Serial.println("STA-active");
+      } else {
+        WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+        mvAP_active=true;
+        Serial.println("AP-active");
+      }
     } else {
-      //stay in STA mode
+      // STA credentials not available
+      Serial.println("STA credentials not available");
+
+      WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+      mvAP_active=true;      
+      Serial.println("AP-active");
     }
   }
 
-  // case AP
-  if (mvAP_active == true) {
-    if (mvUserSettings.wifiSettingsAvailable == true) {
-      oliWiFiStopAP();
-      oliWiFiStartSTA();
-    } else {
-      // stay in AP mode
+  if (mvAP_active==true && mvSTA_active==false) {
+
+    if (strlen(mvUserSettings.userSSID) != 0 && strlen(mvUserSettings.userPassword) != 0) {
+
+      if (SettingsUserChanged() == true) {
+        Serial.println("STA credentials changed");
+        Serial.println("STA credentials available");
+
+        WiFi.begin(mvUserSettings.userSSID, mvUserSettings.userPassword);
+        if (WiFi.waitForConnectResult(WIFI_CONNECT_TO) == WL_CONNECTED) {
+          mvSTA_active = true;
+          Serial.println("STA-active");
+        } else {
+          Serial.println("STA connect failed");
+          if (mvAP_active == false) {
+            WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+            mvAP_active=true;
+            Serial.println("AP-active");
+          }
+        }
+      }
+    }
+
+    if (millis() > mvConnectTime + WIFI_RETRY_TIME) {
+      // TO
+      Serial.println("TO-tje");
+
+      mvConnectTime = millis();
+
+      if (SettingsOliChanged() == true) {
+        // stop and start AP
+        Serial.println("Oli credentials changed");
+
+        WiFi.softAPdisconnect(true);
+        WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+      }
+
+      if (strlen(mvUserSettings.userSSID) != 0 && strlen(mvUserSettings.userPassword) != 0) {
+        // STA credentials available
+        Serial.println("STA cedentials available");
+
+        WiFi.begin(mvUserSettings.userSSID, mvUserSettings.userPassword);
+        if (WiFi.waitForConnectResult(WIFI_CONNECT_TO) == WL_CONNECTED) {
+          mvSTA_active = true;
+          Serial.println("STA-active");
+        } else {
+          Serial.println("STA connect failed");
+          if (mvAP_active == false) {
+            WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+            mvAP_active=true;
+            Serial.println("AP-active");
+          }
+        }
+      }
     }
   }
 
-  // case unconnected
-  if (mvSTA_active == false && mvAP_active == false) {
-    if (mvUserSettings.wifiSettingsAvailable == true) {
-      oliWiFiStartSTA();
-    } else { 
-      oliWiFiStartAP();
+  if (mvAP_active==true && mvSTA_active==true) {
+
+    if (millis() - mvConnectTime >= WIFI_RETRY_TIME) {
+      // TO
+      Serial.println("TO");
+      mvConnectTime = millis();
+
+      WiFi.softAPdisconnect(true);
+      mvAP_active = false;
+      Serial.println("AP-deactive");
     }
   }
-  
-  // case Time Out
-  if (millis() - mvConnectTime >= WIFI_RETRY_TIME) {
-    mvConnectTime = millis();
-    if (mvAP_active == true) {
-      oliWiFiStartSTA();
+
+  if (mvSTA_active==true) {
+
+    if (WiFi.status() != WL_CONNECTED || SettingsUserChanged() == true) {  
+      Serial.println("STA connection lost or STA settings changed");
+
+      WiFi.disconnect();
+      mvSTA_active = false;
+      Serial.println("STA-deactive");
+
+      WiFi.begin(mvUserSettings.userSSID, mvUserSettings.userPassword);
+      if (WiFi.waitForConnectResult(WIFI_CONNECT_TO) == WL_CONNECTED) {
+        mvSTA_active = true;
+        Serial.println("STA-active");
+      } else {
+        if (mvAP_active == false) {
+          WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+          mvAP_active=true;
+          Serial.println("AP-active");
+        }
+      }
     }
   }
 }

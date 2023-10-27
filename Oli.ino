@@ -13,10 +13,10 @@ void setup() {
   SettingsInit();
   SettingsDump();
 
+  oliWiFiInit();
   webserverInit();
 }
 
 void loop() {
-  MDNS.update();
   oliWiFiHandleWiFi();
 }

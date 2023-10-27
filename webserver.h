@@ -2,6 +2,5 @@
 #define WEBSERVER_H
 
 void webserverInit();
-void webserverHandleWiFi();
 
 #endif

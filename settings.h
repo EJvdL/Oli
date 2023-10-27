@@ -12,6 +12,11 @@ bool  SettingsStore();
 bool  SettingsClear();
 bool  SettingsValid();
 void  SettingsDump();
+void SettingsSetOliPassword(const char*);
+void SettingsSetUserPassword(const char*);
+void SettingsSetUserSSID(const char*);
+bool  SettingsUserChanged();
+bool  SettingsOliChanged();
 
 /*
   Structure to hold the user preferences. 
@@ -23,11 +28,11 @@ typedef struct UserSettings {
 
   char  oliPassword[MAX_SECURITY_LENGTH + 1];    // + 1 for the terminating \0
 
-  bool  wifiSettingsAvailable;
   char  userSSID[MAX_SECURITY_LENGTH + 1];
   char  userPassword[MAX_SECURITY_LENGTH + 1];
   
-  bool  scenarioAvailable;
+//  bool  wifiSettingsAvailable;
+//  bool  scenarioAvailable;
   // monday scenario
   DateTime  maTijd1;
   CRGB      maKleur1;

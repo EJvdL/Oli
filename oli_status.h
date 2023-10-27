@@ -3,13 +3,14 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="30">
 </head>
 <body>
 <h2>Oli Status</h2>
     <fieldset>
         %DATE_TIME%
         <br><br>
-        %CONNECTED_TO%
+        %CONNECTED_TO% %SSID% %IP%
         <br><br>
         %COLOR%
         <br>
