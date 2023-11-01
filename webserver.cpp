@@ -8,17 +8,14 @@
 #include "oli_config.h"
 #include "oli_status.h"
 #include "oli_scenarios.h"
-#include "oli_redirect.h"
+//#include "oli_redirect.h"
 
 AsyncWebServer server(80);
-
-
 
 // handle the submit button on the Oli Configuration page
 // store the received name-value pairs into the user settings
 // redirect the browser to the oli status webpage
 void submitConfig(AsyncWebServerRequest *request) {
-
   Serial.println("submitConfig");
   int params = request->params();
   for (int i = 0; i < params; i++) {
@@ -34,22 +31,25 @@ void submitConfig(AsyncWebServerRequest *request) {
       if (strcmp(p->name().c_str(), "oli-pwd") == 0) {
         Serial.print("Change oli pwd:\t");
         Serial.println(p->value().c_str());
-        //strcpy(mvUserSettings.oliPassword, p->value().c_str());
         SettingsSetOliPassword(p->value().c_str());
       }
 
       if (strcmp(p->name().c_str(), "ssid") == 0) {
         Serial.print("Change wifi ssid:\t");
         Serial.println(p->value().c_str());
-        //        strcpy(mvUserSettings.userSSID, p->value().c_str());
         SettingsSetUserSSID(p->value().c_str());
       }
 
       if (strcmp(p->name().c_str(), "pwd") == 0) {
         Serial.print("Change wifi pwd:\t");
         Serial.println(p->value().c_str());
-        //        strcpy(mvUserSettings.userPassword, p->value().c_str());
         SettingsSetUserPassword(p->value().c_str());
+      }
+
+      if (strcmp(p->name().c_str(), "reset") == 0) {
+        Serial.print("Fabrieksinstellingen:\t");
+        Serial.println(p->value().c_str());
+        SettingsClear();
       }
     }
   }
@@ -80,7 +80,6 @@ void submitScenario(AsyncWebServerRequest *request) {
 // The string %COLOR% must be replaced by the actual color of oli.
 // This function is called by the webserver as we indicated that, see function webserverInit()
 String processor(const String &var) {
-  Serial.print("processor: ");
 
   if (var == "DATE_TIME") {
     return String(rtcGetTime());
@@ -91,10 +90,8 @@ String processor(const String &var) {
   } else if (var == "IP") {
     return (oliWiFigetIP());
   } else if (var == "COLOR") {
-    Serial.println("Kleur");
     return String("Huidige kleur: Rood - echte kleur weergeven in RGB?");
   } else if (var == "INTENSITEIT") {
-    Serial.println("Intensiteit");
     return String("Intensiteit: 50%");
   }
   return String();
@@ -103,30 +100,36 @@ String processor(const String &var) {
 void webserverInit() {
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    Serial.println("root");
     request->send_P(200, "text/html", PAGE_oli_config);
   });
 
   server.on("/config", HTTP_GET, [](AsyncWebServerRequest *request) {
+    Serial.println("/config");
     request->send_P(200, "text/html", PAGE_oli_config);
   });
 
   server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //    request->send_P(200, "text/html", PAGE_oli_status, processor);        // the processor function replaces %NAME% by some value
-    request->send_P(200, "text/html", PAGE_oli_status);  // the processor function replaces %NAME% by some value
+    Serial.println("/status");
+    request->send_P(200, "text/html", PAGE_oli_status, processor);        // the processor function replaces %NAME% by some value
+//    request->send_P(200, "text/html", PAGE_oli_status);        // the processor function replaces %NAME% by some value
   });
 
   server.on("/scenarios", HTTP_GET, [](AsyncWebServerRequest *request) {
+    Serial.println("/scenarios");
     request->send_P(200, "text/html", PAGE_oli_scenarios);
   });
 
   server.on("/submitConfig", HTTP_POST, submitConfig);
   server.on("/submitScenario", HTTP_POST, submitScenario);
 
-  server.on("/redirect", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send_P(200, "text/html", PAGE_oli_redirect);
-  });
+//  server.on("/redirect", HTTP_GET, [](AsyncWebServerRequest *request) {
+//    Serial.println("/redirect");
+//    request->send_P(200, "text/html", PAGE_oli_redirect);
+//  });
 
   server.onNotFound([](AsyncWebServerRequest *request) {
+    Serial.println("Not found");
     request->redirect("/status");
   });
 

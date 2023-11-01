@@ -10,8 +10,12 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
     <fieldset>
         %DATE_TIME%
         <br><br>
-        %CONNECTED_TO% %SSID% %IP%
-        <br><br>
+        %CONNECTED_TO% %SSID% 
+        <br><br>Open je browser en ga naar 
+        <ul>
+        <li><b>oli.local</b> op een Apple apparaat of naar</li>
+        <li><b>http://%IP%/</b> op een Android apparaat</li>
+        </ul>
         %COLOR%
         <br>
         %INTENSITEIT%

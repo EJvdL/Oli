@@ -6,6 +6,8 @@
 void setup() {
   Serial.begin(115200);
   while (!Serial) yield();
+  delay(500);
+  
   Serial.println();
 
   rtcInit();

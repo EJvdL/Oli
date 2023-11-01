@@ -3,12 +3,12 @@
 #include "settings.h"
 #include "oliwifi.h"
 
-
 #define WIFI_RETRY_TIME (1 * 60 * 1000)
 #define WIFI_CONNECT_TO (30000)
 
-const char* oli_network  = "Verbonden aan het Oli WiFi netwerk ";
-const char* home_network = "Verbonden aan het thuis netwerk ";
+const char* oli_network    = "Verbind aan het WiFI netwerk Oli";
+const char* home_network   = "Verbind aan het WiFI netwerk: ";
+const char* myEmptyString  = " ";
 
 
 bool      mvAP_active  = false;
@@ -17,6 +17,10 @@ long int  mvConnectTime = 0;
 
 void oliWiFiInit() {
   WiFi.mode(WIFI_AP_STA);
+
+   IPAddress lvLocal_IP(10,0,0,1);
+   IPAddress lvSubnetMask(255,255,255,0);
+   WiFi.softAPConfig (lvLocal_IP, lvLocal_IP, lvSubnetMask);
 
   if (MDNS.begin(oli_mdns)) {
     Serial.print(F("MDNS on: ")); Serial.print(oli_mdns); Serial.println(F(".local"));
@@ -37,19 +41,18 @@ const char * oliWiFigetStatus() {
 }
 
 const char * oliWiFigetSsid() {
-  Serial.println("getSSID");
+//  Serial.println("getSSID");
 
-  if (WiFi.status() == WL_CONNECTED) {  
+  if (mvSTA_active == true) {  
     return (mvUserSettings.userSSID);
   } else {
-    Serial.println("kan niet goed werken");
-    return("");
+    return(myEmptyString);
   }
 }
 
 String oliWiFigetIP() {
-  Serial.println("getIP");
-  if (WiFi.status() == WL_CONNECTED) {  
+//  Serial.println("getIP");
+  if (mvSTA_active == true) {  
     return (WiFi.localIP().toString());
   } else {
     return (WiFi.softAPIP().toString());
@@ -75,17 +78,21 @@ void oliWiFiHandleWiFi() {
         mvSTA_active = true;
         Serial.println("STA-active");
       } else {
-        WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
-        mvAP_active=true;
-        Serial.println("AP-active");
+        Serial.println("STA connect failed");
       }
-    } else {
+    //   } else {
+    //     WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+    //     mvAP_active=true;
+    //     Serial.println("AP-active");
+    //   }
+    // } else {
       // STA credentials not available
-      Serial.println("STA credentials not available");
+      // Serial.println("STA credentials not available");
 
       WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
       mvAP_active=true;      
       Serial.println("AP-active");
+    // }
     }
   }
 
@@ -114,7 +121,7 @@ void oliWiFiHandleWiFi() {
 
     if (millis() > mvConnectTime + WIFI_RETRY_TIME) {
       // TO
-      Serial.println("TO-tje");
+      Serial.println("AP-mode-TO");
 
       mvConnectTime = millis();
 
@@ -150,7 +157,7 @@ void oliWiFiHandleWiFi() {
 
     if (millis() - mvConnectTime >= WIFI_RETRY_TIME) {
       // TO
-      Serial.println("TO");
+      Serial.println("AP-STA-mode-TO");
       mvConnectTime = millis();
 
       WiFi.softAPdisconnect(true);
