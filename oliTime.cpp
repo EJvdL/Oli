@@ -1,8 +1,11 @@
+// Timezone info: http://www.hs-help.net/hshelp/gira/v4_7/en/proj_tz.html
+//
+#include <DS1307RTC.h> // is now also included in the main file, else system crashes
+
 #include "oliTime.h"
 
 #include <TZ.h> 
 
-#include <DS1307RTC.h>
 #include <Timezone.h>
 
 TimeChangeRule myDST = {"CED", Last, Sun, Mar, 2, +120};      // Daylight time = UTC + 2 hours
@@ -44,10 +47,11 @@ bool initRTC() {
 void oliTimeInit() {
   initNTP();
   if (initRTC() == false) {
-    while (true) {
-      Serial.println("RTC init failed");
-      delay(10000);
-    }
+    Serial.println("RTC init failed");
+    // while (true) {
+    //   Serial.println("RTC init failed");
+    //   delay(10000);
+    // }
   }
 }
 
@@ -67,26 +71,33 @@ bool validNTPTime() {
   return lvResult;
 }
 
-void oliTimeSync() {
+bool oliTimeSync() {
+  bool lvResult = false;
+
   if (validNTPTime() == true) {
     time_t lvRTCNow    = RTC.get();
     time_t lvSystemNow = ntpTime();
     if(lvSystemNow != lvRTCNow) {
-      RTC.set(ntpTime());
+      lvResult = RTC.set(ntpTime());
+      if (lvResult == true) {
+        Serial.println("Sync RTC time to NTP");
+        
+        Serial.print("NTP unix time:\t");
+        Serial.println(lvSystemNow);
 
-      Serial.println("Sync RTC time to NTP");
-      
-      Serial.print("NTP unix time:\t");
-      Serial.println(lvSystemNow);
-
-      Serial.print("RTC unix time:\t");
-      Serial.println(lvRTCNow);
+        Serial.print("RTC unix time:\t");
+        Serial.println(lvRTCNow);
+      } else {
+        Serial.println("Failed to set RTC time");
+      }
     } else {
-//      Serial.println("RTC in sync with NTP");
+      lvResult = true;
+      Serial.println("RTC in sync with NTP");
     }
-  } else { 
-    Serial.println("no NTP");
-  }  
+  } else {
+    //    Serial.println("no NTP");
+  }
+  return (lvResult);
 }
 
 char* oliTimeGetTime() {

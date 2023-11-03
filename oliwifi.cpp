@@ -88,12 +88,11 @@ void oliWiFiHandleWiFi() {
     // } else {
       // STA credentials not available
       // Serial.println("STA credentials not available");
-
-      WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
-      mvAP_active=true;      
-      Serial.println("AP-active");
-    // }
     }
+    WiFi.softAP(oli_ssid, mvUserSettings.oliPassword);
+    mvAP_active=true;      
+    Serial.println("AP-active");
+    // }
   }
 
   if (mvAP_active==true && mvSTA_active==false) {

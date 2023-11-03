@@ -1,7 +1,7 @@
+#include "oliTime.h"
 #include <ESPAsyncWebServer.h>
 #include "webserver.h"
 #include "settings.h"
-#include "rtc.h"
 #include "oliwifi.h"
 
 //Include the HTML, STYLE and Script "Pages"
@@ -82,7 +82,7 @@ void submitScenario(AsyncWebServerRequest *request) {
 String processor(const String &var) {
 
   if (var == "DATE_TIME") {
-    return String(rtcGetTime());
+    return String(oliTimeGetTime());
   } else if (var == "CONNECTED_TO") {
     return String(oliWiFigetStatus());
   } else if (var == "SSID") {
