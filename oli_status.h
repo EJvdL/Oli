@@ -10,11 +10,11 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
     <fieldset>
         %DATE_TIME%
         <br><br>
-        %CONNECTED_TO% %SSID% 
+        Verbind aan het WiFI netwerk: %SSID%
         <br><br>Open je browser en ga naar 
         <ul>
-        <li><b>oli.local</b> op een Apple apparaat of naar</li>
-        <li><b>http://%IP%/</b> op een Android apparaat</li>
+        <li><b><a href="http://oli.local/status">http://oli.local/status</a></b> op een Apple apparaat of naar</li>
+        <li><b><a href="http://%IP%/status">http://%IP%/status</a></b> op een Android apparaat</li>
         </ul>
         %COLOR%
         <br>
