@@ -15,7 +15,7 @@
 #include <Timezone.h>
 
 TimeChangeRule myDST = {"CED", Last, Sun, Mar, 2, +120};      // Daylight time = UTC + 2 hours
-TimeChangeRule mySTD = {"CES", Last, Sun, Oct, 2, +60};       // Standard time = UTC + 1 hour
+TimeChangeRule mySTD = {"CES", Last, Sun, Oct, 3, +60};       // Standard time = UTC + 1 hour
 Timezone myLocalTimezone(myDST, mySTD);
 
 void initNTP();
@@ -23,9 +23,9 @@ bool initRTC();
 time_t ntpTime();
 bool validNTPTime();
 
-void ATimeInit() {
+bool ATimeInit() {
   initNTP();
-  (void) initRTC();
+  return (initRTC());
 }
 
 // To be called now and then....
@@ -86,6 +86,20 @@ char* ATimeGetTime() {
 
 void ATimeDumpTime() {
   Serial.println(ATimeGetTime());
+}
+
+trigger_time_t ATimeGetBrokenTime() {
+  TimeChangeRule  *tcr;                      // pointer to the time change rule used, use it to get the TZ abbrev
+  trigger_time_t  lvTriggerTime;
+
+  time_t lvNow = RTC.get();
+  lvNow = myLocalTimezone.toLocal(lvNow, &tcr);
+  struct tm* lvTmStruct = localtime(&lvNow);
+  lvTriggerTime.theDay = lvTmStruct->tm_wday;
+  lvTriggerTime.theHour = lvTmStruct->tm_hour;
+  lvTriggerTime.theMinute = lvTmStruct->tm_min;
+  
+  return (lvTriggerTime);
 }
 
 void initNTP() {

@@ -12,7 +12,7 @@
 void  AWifiInit(const char*);
 void  AWifiSetOliCredentials (const char*, const char*);
 void  AWifiSetUserCredentials(const char*, const char*);
-void  AWifiHandleWiFi();
+bool  AWifiHandleWiFi();
 const char * AWifiGetSSID();
 String AWifiGetIP();
 

@@ -36,6 +36,7 @@ bool lvResult = false;
 
 /*
   ASettingStore()
+  False if error occurred
   */
 bool ASettingStore() {
 //  Serial.println("SettingStore");

@@ -6,12 +6,19 @@
 #ifndef ATime_H
 #define ATime_H
 
+typedef struct Trigger_time {
+  uint8_t  theDay;
+  uint8_t  theHour;
+  uint8_t  theMinute;
+} trigger_time_t;
 
-void ATimeInit();
+bool ATimeInit();
 bool ATimeSync();
 void ATimeSetTime(const char*);
 
 char* ATimeGetTime();
 void  ATimeDumpTime();
+
+trigger_time_t ATimeGetBrokenTime();
 
 #endif

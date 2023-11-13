@@ -4,12 +4,18 @@
 #include "webserver.h"
 #include "ATime.h"
 #include "secure.h"
+#include "ALed.h"
 
-void setDefaultSettings();
+void initWiFi();
+void initSettings();
+void setDefaults();
+void resetSettingsToDefault();
 
-bool  mvUserSSIDChanged = false;
+bool  mvUserSSIDChanged     = false;
 bool  mvUserPasswordChanged = false;
-bool  mvClearSettings = false;
+bool  mvOliPasswordChanged  = false;
+bool  mvClearSettings       = false;
+bool  mvStoreScenarios      = false;
 
 
 void setup() {
@@ -18,92 +24,198 @@ void setup() {
   delay(3000);  // if no delay, the output is not always visiblew on the serial monitor.
   Serial.println();
 
-  if (ASettingInit() == false) {      // use default values if no values stored in EEPROM
-    setDefaultSettings();
-  }
-  ASettingDump();
-  Serial.println("Current settings: ");
-  Serial.println(mvUserSettings.oliPassword);
-  Serial.println(mvUserSettings.userSSID);
-  Serial.println(mvUserSettings.userPassword);
+  ALedInit();
 
-  AWifiInit(OliMdns);
-  AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
-  if (strlen(mvUserSettings.userSSID) != 0 && strlen(mvUserSettings.userPassword) != 0) {
-    AWifiSetUserCredentials(mvUserSettings.userSSID ,mvUserSettings.userPassword);
-  }
-
+  initSettings();
+  initWiFi();
   webserverInit();
-  ATimeInit();
+  if (ATimeInit() == false) {
+    ALedError(rtcError);
+  }
 }
 
 void loop() {
   static bool lvTimeSync = false;
 
-  if (Serial.parseInt() !=  0) {
+  if (Serial.parseInt() !=  0) {    // can be used to check if main-loop still runs if web-interface is locked
     Serial.print(".");
   }
 
-  AWifiHandleWiFi();
+  if (AWifiHandleWiFi() == true) {  // Sync again if  a STA connection is made
+    lvTimeSync = false;
+  }
 
+  if (mvOliPasswordChanged == true) {
+    ASettingStore();
+    AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
+    mvOliPasswordChanged  = false;  
+  }
+  
   if (mvUserSSIDChanged == true && mvUserPasswordChanged == true) {
     ASettingStore();
     AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
-    mvUserSSIDChanged = false;
+    mvUserSSIDChanged     = false;
     mvUserPasswordChanged = false;
-    lvTimeSync = false;
   }
 
   if (mvClearSettings == true) {
-    mvClearSettings = false;
     Serial.println("Now clear the settings");
-    setDefaultSettings();
+    resetSettingsToDefault();
     AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
-    AWifiSetUserCredentials("", "");
-    lvTimeSync = false;
+    AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
+    mvClearSettings = false;
   }
+  
+  if (mvStoreScenarios == true) {
+    mvStoreScenarios = false;
+    ASettingStore();
+  }
+
   // if NTP becomes available sync the RTC - do this once
   if (lvTimeSync == false) {
     lvTimeSync = ATimeSync();
   }
+
+  checkTriggers();
 }
 
-void setOliTime(const char* fpString) {
+// Callback from webserver, must be short
+void oliSetTime(const char* fpString) {
   Serial.print("set time: ");
   Serial.println(fpString);
   ATimeSetTime(fpString);
 }
 
-void setOliPassword(const char* fpString) {
+// Callback from webserver, must be short
+void oliSetPassword(const char* fpString) {
   Serial.print("set Oli password: ");
   Serial.println(fpString);
   strcpy(mvUserSettings.oliPassword, fpString);
-  ASettingStore();
-  AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
+  mvOliPasswordChanged = true;
 }
 
-void setUserSSID(const char* fpString) {
+// Callback from webserver, must be short
+void oliSetUserSSID(const char* fpString) {
   Serial.print("set WiFi SSID: ");
   Serial.println(fpString);
   strcpy(mvUserSettings.userSSID, fpString);
   mvUserSSIDChanged = true;
 }
 
-void setUserPassword(const char* fpString) {
+// Callback from webserver, must be short
+void oliSetUserPassword(const char* fpString) {
   Serial.print("set WiFi password: ");
   Serial.println(fpString);
   strcpy(mvUserSettings.userPassword, fpString);
   mvUserPasswordChanged = true;
 }
 
-void clearSettings() {
+// Callback from webserver, must be short
+void oliClearSettings() {
   mvClearSettings = true;
   Serial.println("clear settings");
 }
 
-void setDefaultSettings() {
+// Callback from webserver, must be short
+void oliStoreScenarios() {
+  // sort the list of triggers on increasing time
+  for (int i = 0; i < 7; i++) {   // sunday to saturday
+    for (int j = 0; j < 4 - 1; j++) {
+      if ((mvUserSettings.triggers[i][j].theHour * 60 + mvUserSettings.triggers[i][j].theMinute) > (mvUserSettings.triggers[i][j + 1].theHour * 60 + mvUserSettings.triggers[i][j + 1].theMinute)) {
+        uint8_t  lvHour    = mvUserSettings.triggers[i][j].theHour;
+        uint8_t  lvMinute  = mvUserSettings.triggers[i][j].theMinute;
+        uint32_t lvRGB     = mvUserSettings.triggers[i][j].theRGB;
+        mvUserSettings.triggers[i][j].theHour   = mvUserSettings.triggers[i][j + 1].theHour;
+        mvUserSettings.triggers[i][j].theMinute = mvUserSettings.triggers[i][j + 1].theMinute;
+        mvUserSettings.triggers[i][j].theRGB    = mvUserSettings.triggers[i][j + 1].theRGB;
+        mvUserSettings.triggers[i][j + 1].theHour   = lvHour;
+        mvUserSettings.triggers[i][j + 1].theMinute = lvMinute;
+        mvUserSettings.triggers[i][j + 1].theRGB    = lvRGB;
+        j = 0;
+      }
+    }
+  }  
+  mvStoreScenarios = true;
+}
+
+void initWiFi() {
+  AWifiInit(OliMdns);
+  AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
+  if (strlen(mvUserSettings.userSSID) != 0 && strlen(mvUserSettings.userPassword) != 0) {
+    AWifiSetUserCredentials(mvUserSettings.userSSID ,mvUserSettings.userPassword);
+  }
+}
+
+void initSettings() {
+  if (ASettingInit() == false) {      // use default values if no values stored in EEPROM
+    setDefaults();
+  }
+  ASettingDump();                     //dump EEPROm values
+  Serial.println("Current settings: ");
+  Serial.println(mvUserSettings.oliPassword);
+  Serial.println(mvUserSettings.userSSID);
+  Serial.println(mvUserSettings.userPassword);
+}
+
+void setDefaults() {
   strcpy(mvUserSettings.oliPassword, OliPwd);
   strcpy(mvUserSettings.userSSID, "");
   strcpy(mvUserSettings.userPassword, "");
+
+  for (int i = 0; i < 7; i++) {   // sunday to saturday
+    mvUserSettings.triggers[i][0].theHour   = 6;        // 06:15
+    mvUserSettings.triggers[i][0].theMinute = 15;
+    mvUserSettings.triggers[i][0].theRGB    = 0x664000; // Orange
+
+    mvUserSettings.triggers[i][1].theHour   = 6;        // 06:30
+    mvUserSettings.triggers[i][1].theMinute = 30;
+    mvUserSettings.triggers[i][1].theRGB    = 0x048400; // Green
+
+    mvUserSettings.triggers[i][2].theHour   = 8;        // 08:00
+    mvUserSettings.triggers[i][2].theMinute = 0;
+    mvUserSettings.triggers[i][2].theRGB    = 0x000000; // Black
+
+    mvUserSettings.triggers[i][3].theHour   = 19;       // 19:00
+    mvUserSettings.triggers[i][3].theMinute = 0;
+    mvUserSettings.triggers[i][3].theRGB    = 0x048400; // Purple 
+  }
+}
+
+void resetSettingsToDefault() {
+  setDefaults();
   ASettingStore();
 }
+
+void checkTriggers() {
+  trigger_time_t  lvTriggerTime = ATimeGetBrokenTime();
+
+  // convert hour/minute in an integer (60*hour + minute) to get easier comparison
+  int lvNow = 60 * lvTriggerTime.theHour + lvTriggerTime.theMinute;
+
+  // Check the triggers of the current day
+  int lvT1 = 60 * mvUserSettings.triggers[lvTriggerTime.theDay][0].theHour + mvUserSettings.triggers[lvTriggerTime.theDay][0].theMinute;
+  int lvT2 = 60 * mvUserSettings.triggers[lvTriggerTime.theDay][1].theHour + mvUserSettings.triggers[lvTriggerTime.theDay][1].theMinute;
+  int lvT3 = 60 * mvUserSettings.triggers[lvTriggerTime.theDay][2].theHour + mvUserSettings.triggers[lvTriggerTime.theDay][2].theMinute;
+  int lvT4 = 60 * mvUserSettings.triggers[lvTriggerTime.theDay][3].theHour + mvUserSettings.triggers[lvTriggerTime.theDay][3].theMinute;
+
+  if (lvNow < lvT1) {
+    ALedSet(mvUserSettings.triggers[lvTriggerTime.theDay][3].theRGB);
+  }
+
+  if (lvNow >= lvT1 && lvNow < lvT2) {
+    ALedSet(mvUserSettings.triggers[lvTriggerTime.theDay][0].theRGB);
+  }
+
+  if (lvNow >= lvT2 && lvNow < lvT3) {
+    ALedSet(mvUserSettings.triggers[lvTriggerTime.theDay][1].theRGB);
+  }
+
+  if (lvNow >= lvT3 && lvNow < lvT4) {
+    ALedSet(mvUserSettings.triggers[lvTriggerTime.theDay][2].theRGB);
+  }
+
+  if (lvNow >= lvT4) {
+    ALedSet(mvUserSettings.triggers[lvTriggerTime.theDay][3].theRGB);
+  }
+}
+

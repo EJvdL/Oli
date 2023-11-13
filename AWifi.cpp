@@ -67,18 +67,22 @@ void  AWifiSetUserCredentials(const char* fpSSID, const char* fpPwd){
 // If connection to WiFi network not possible start WiFi AP mode
 // Repeat if connection to WiFi network is lost
 // Repeat after WIFI_RETRY_MINUTES minutes
-void AWifiHandleWiFi() {
+// Return true if STA connection is established
+bool AWifiHandleWiFi() {
+  bool lvResult = false;
+
   if (mvInit == true) {
     MDNS.update();
 
     if (mvAP_active == false && WiFi.status() != WL_CONNECTED) {
       WiFi.softAP(mvOliSSID, mvOliPwd);
       mvAP_active = true;
-      Serial.println("Start-AP want STA not connected");
+      Serial.println("Start-AP want STA not connected, cancel timer if running");
+      mvConnectTime = 0;    // stop possibly running timer
     }
 
     if (mvAP_active == true && WiFi.status() == WL_CONNECTED) {
-      mvConnectTime = millis() + WIFI_RETRY_TIME;
+      mvConnectTime = millis() + WIFI_RETRY_TIME;   // start timer
       mvAP_active = false;
       Serial.println("STA active. Keep AP-active for a while, start timer to disable AP");
     }
@@ -88,9 +92,11 @@ void AWifiHandleWiFi() {
       WiFi.softAPdisconnect(true);
       Serial.println("Stop-AP");
       mvAP_active = false;
-      mvConnectTime = 0;
+      mvConnectTime = 0;  // stop the timer
+      lvResult = true;    // STA is stable and available
     }
   }
+  return (lvResult);
 }
 
 const char * AWifiGetSSID() {

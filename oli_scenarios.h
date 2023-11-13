@@ -2,147 +2,128 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.5">
 </head>
 <body>
 <h2>Oli Scenarios</h2>
   <form action="/submitScenario" method="post" target="_self">
     <fieldset>
-    <legend>Maandag</legend>  
-        <input type="time" id="tijdma1" name="tijdma1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurma1" name="kleurma1" value="#ff6600">
-        <input type="number" id="intensiteitma1" name="intensiteitma1" value="50" min="1" max="100" style="width: 2.5em;">        
+    <legend>Maandag</legend> 
+        <button type="button" onclick="maandagAlsZondag()">Kopieer van zondag</button> <!-- type="button prevents the button from implicitly performing a submit -->
         <br>
-        <input type="time" id="tijdma2" name="tijdma2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurma2" name="kleurma2" value="#ffff66">
-        <input type="number" id="intensiteitma2" name="intensiteitma2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T10" name="T10" value="%T10%" style="width: 5em;">
+        <input type="color" required id="K10" name="K10" value="%K10%">
         <br>
-        <input type="time" id="tijdma3" name="tijdma3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurma3" name="kleurma3" value="#66ff66">
-        <input type="number" id="intensiteitma3" name="intensiteitma3" value="50" min="1" max="100" style="width: 2.5em;">
+        <input type="time" required id="T11" name="T11" value="%T11%" style="width: 5em;">
+        <input type="color" required id="K11" name="K11" value="%K11%">
         <br>
-        <input type="time" id="tijdma4" name="tijdma4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T12" name="T12" value="%T12%" style="width: 5em;">
+        <input type="color" required id="K12" name="K12" value="%K12%">
+        <br>
+        <input type="time" required id="T13" name="T13" value="%T13%" style="width: 5em;">
+        <input type="color" required id="K13" name="K13" value="%K13%">
     </fieldset>  
     <br>
     <fieldset>
     <legend>Dinsdag</legend>
-        <button type="button" onclick="dinsdagAlsMaandag()">Copy from yesterday</button> <!-- type="button prevents the button from implicitly performing a submit -->
+        <button type="button" onclick="dinsdagAlsMaandag()">Kopieer van maandag</button> <!-- type="button prevents the button from implicitly performing a submit -->
         <br>
-        <input type="time" id="tijddi1" name="tijddi1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurdi1" name="kleurdi1" value="#ff6600">
-        <input type="number" id="intensiteitdi1" name="intensiteitdi1" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T20" name="T20" value="%T20%" style="width: 5em;">
+        <input type="color" required id="K20" name="K20" value="%K20%">
         <br>
-        <input type="time" id="tijddi2" name="tijddi2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurdi2" name="kleurdi2" value="#ffff66">
-        <input type="number" id="intensiteitdi2" name="intensiteitdi2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T21" name="T21" value="%T21%" style="width: 5em;">
+        <input type="color" required id="K21" name="K21" value="%K21%">
         <br>
-        <input type="time" id="tijddi3" name="tijddi3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurdi3" name="kleurdi3" value="#66ff66">
-        <input type="number" id="intensiteitdi3" name="intensiteitdi3" value="50" min="1" max="100" style="width: 2.5em;"> 
+        <input type="time" required id="T22" name="T22" value="%T22%" style="width: 5em;">
+        <input type="color" required id="K22" name="K22" value="%K22%">
         <br>
-        <input type="time" id="tijddi4" name="tijddi4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T23" name="T23" value="%T23%" style="width: 5em;">
+        <input type="color" required id="K23" name="K23" value="%K23%">
     </fieldset>  
     <br>    
     <fieldset>
     <legend>Woensdag</legend>
-        <button type="button" onclick="woensdagAlsDinsdag()">Copy from yesterday</button>
+        <button type="button" onclick="woensdagAlsDinsdag()">Kopieer van dinsdag</button>
         <br>    
-        <input type="time" id="tijdwo1" name="tijdwo1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurwo1" name="kleurwo1" value="#ff6600">
-        <input type="number" id="intensiteitwo1" name="intensiteitwo1" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T30" name="T30" value="%T30%" style="width: 5em;">
+        <input type="color" required id="K30" name="K30" value="%K30%">
         <br>
-        <input type="time" id="tijdwo2" name="tijdwo2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurwo2" name="kleurwo2" value="#ffff66">
-        <input type="number" id="intensiteitwo2" name="intensiteitwo2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T31" name="T31" value="%T31%" style="width: 5em;">
+        <input type="color" required id="K31" name="K31" value="%K31%">
         <br>
-        <input type="time" id="tijdwo3" name="tijdwo3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurwo3" name="kleurwo3" value="#66ff66">
-        <input type="number" id="intensiteitwo3" name="intensiteitwo3" value="50" min="1" max="100" style="width: 2.5em;"> 
+        <input type="time" required id="T32" name="T32" value="%T32%" style="width: 5em;">
+        <input type="color" required id="K32" name="K32" value="%K32%">
         <br>
-        <input type="time" id="tijdwo4" name="tijdwo4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T33" name="T33" value="%T33%" style="width: 5em;">
+        <input type="color" required id="K33" name="K33" value="%K33%">
     </fieldset>  
     <br>    
     <fieldset>
     <legend>Donderdag</legend> 
-        <button type="button" onclick="donderdagAlsWoensdag()">Copy from yesterday</button>
+        <button type="button" onclick="donderdagAlsWoensdag()">Kopieer van woensdag</button>
         <br>     
-        <input type="time" id="tijddo1" name="tijddo1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurdo1" name="kleurdo1" value="#ff6600">
-        <input type="number" id="intensiteitdo1" name="intensiteitdo1" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T40" name="T40" value="%T40%" style="width: 5em;">
+        <input type="color" required id="K40" name="K40" value="%K40%">
         <br>
-        <input type="time" id="tijddo2" name="tijddo2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurdo2" name="kleurdo2" value="#ffff66">
-        <input type="number" id="intensiteitdo2" name="intensiteitdo2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T41" name="T41" value="%T41%" style="width: 5em;">
+        <input type="color" required id="K41" name="K41" value="%K41%">
         <br>
-        <input type="time" id="tijddo3" name="tijddo3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurdo3" name="kleurdo3" value="#66ff66">
-        <input type="number" id="intensiteitdo3" name="intensiteitdo3" value="50" min="1" max="100" style="width: 2.5em;">   
+        <input type="time" required id="T42" name="T42" value="%T42%" style="width: 5em;">
+        <input type="color" required id="K42" name="K42" value="%K42%">
         <br>
-        <input type="time" id="tijddo4" name="tijddo4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T43" name="T43" value="%T43%" style="width: 5em;">
+        <input type="color" required id="K43" name="K43" value="%K43%">
     </fieldset>  
     <br>    
     <fieldset>
     <legend>Vrijdag</legend>  
-        <button type="button" onclick="vrijdagAlsdonderdag()">Copy from yesterday</button>
+        <button type="button" onclick="vrijdagAlsdonderdag()">Kopieer van donderdag</button>
         <br>    
-        <input type="time" id="tijdvr1" name="tijdvr1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurvr1" name="kleurvr1" value="#ff6600">
-        <input type="number" id="intensiteitvr1" name="intensiteitvr1" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T50" name="T50" value="%T50%" style="width: 5em;">
+        <input type="color" required id="K50" name="K50" value="%K50%">
         <br>
-        <input type="time" id="tijdvr2" name="tijdvr2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurvr2" name="kleurvr2" value="#ffff66">
-        <input type="number" id="intensiteitvr2" name="intensiteitvr2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T51" name="T51" value="%T51%" style="width: 5em;">
+        <input type="color" required id="K51" name="K51" value="%K51%">
         <br>
-        <input type="time" id="tijdvr3" name="tijdvr3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurvr3" name="kleurvr3" value="#66ff66">
-        <input type="number" id="intensiteitvr3" name="intensiteitvr3" value="50" min="1" max="100" style="width: 2.5em;"> 
+        <input type="time" required id="T52" name="T52" value="%T52%" style="width: 5em;">
+        <input type="color" required id="K52" name="K52" value="%K52%">
         <br>
-        <input type="time" id="tijdvr4" name="tijdvr4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T53" name="T53" value="%T53%" style="width: 5em;">
+        <input type="color" required id="K53" name="K53" value="%K53%">
     </fieldset>  
     <br>    
     <fieldset>
     <legend>Zaterdag</legend>  
-        <button type="button" onclick="zaterdagAlsVrijdag()">Copy from yesterday</button>
+        <button type="button" onclick="zaterdagAlsVrijdag()">Kopieer van vrijdag</button>
         <br>    
-        <input type="time" id="tijdza1" name="tijdza1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurza1" name="kleurza1" value="#ff6600">
-        <input type="number" id="intensiteitza1" name="intensiteitza1" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T60" name="T60" value="%T60%" style="width: 5em;">
+        <input type="color" required id="K60" name="K60" value="%K60%">
         <br>
-        <input type="time" id="tijdza2" name="tijdza2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurza2" name="kleurza2" value="#ffff66">
-        <input type="number" id="intensiteitza2" name="intensiteitza2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T61" name="T61" value="%T61%" style="width: 5em;">
+        <input type="color" required id="K61" name="K61" value="%K61%">
         <br>
-        <input type="time" id="tijdza3" name="tijdza3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurza3" name="kleurza3" value="#66ff66">
-        <input type="number" id="intensiteitza3" name="intensiteitza3" value="50" min="1" max="100" style="width: 2.5em;"> 
+        <input type="time" required id="T62" name="T62" value="%T62%" style="width: 5em;">
+        <input type="color" required id="K62" name="K62" value="%K62%">
         <br>
-        <input type="time" id="tijdza4" name="tijdza4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T63" name="T63" value="%T63%" style="width: 5em;">
+        <input type="color" required id="K63" name="K63" value="%K63%">
     </fieldset> 
     <br>    
     <fieldset>
     <legend>Zondag</legend>  
-        <button type="button" onclick="zondagAlszaterdag()">Copy from yesterday</button>
+        <button type="button" onclick="zondagAlszaterdag()">Kopieer van zaterdag</button>
         <br>    
-        <input type="time" id="tijdzo1" name="tijdzo1" value="06:32" style="width: 5em;">
-        <input type="color" id="kleurzo1" name="kleurzo1" value="#ff6600">
-        <input type="number" id="intensiteitzo1" name="intensiteitzo1" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T00" name="T00" value="%T00%" style="width: 5em;">
+        <input type="color" required id="K00" name="K00" value="%K00%">
         <br>
-        <input type="time" id="tijdzo2" name="tijdzo2" value="07:00" style="width: 5em;">
-        <input type="color" id="kleurzo2" name="kleurzo2" value="#ffff66">
-        <input type="number" id="intensiteitzo2" name="intensiteitzo2" value="50" min="1" max="100" style="width: 2.5em;">        
+        <input type="time" required id="T01" name="T01" value="%T01%" style="width: 5em;">
+        <input type="color" required id="K01" name="K01" value="%K01%">
         <br>
-        <input type="time" id="tijdzo3" name="tijdzo3" value="07:15" style="width: 5em;">
-        <input type="color" id="kleurzo3" name="kleurzo3" value="#66ff66">
-        <input type="number" id="intensiteitzo3" name="intensiteitzo3" value="50" min="1" max="100" style="width: 2.5em;"> 
+        <input type="time" required id="T02" name="T02" value="%T02%" style="width: 5em;">
+        <input type="color" required id="K02" name="K02" value="%K02%">
         <br>
-        <input type="time" id="tijdzo4" name="tijdzo4" value="07:15" style="width: 5em;">
-        <label>Uit</label>
+        <input type="time" required id="T03" name="T03" value="%T03%" style="width: 5em;">
+        <input type="color" required id="K03" name="K03" value="%K03%">
     </fieldset>
     <br><br>    
     <input type="submit">      
@@ -154,77 +135,75 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
     </fieldset>
   </form>
   <script>
+  function maandagAlsZondag() {
+    document.getElementById("T10").value = document.getElementById("T00").value;
+    document.getElementById("T11").value = document.getElementById("T01").value;
+    document.getElementById("T12").value = document.getElementById("T02").value;
+    document.getElementById("T13").value = document.getElementById("T03").value;
+    document.getElementById("K10").value = document.getElementById("K00").value;
+    document.getElementById("K11").value = document.getElementById("K01").value;
+    document.getElementById("K12").value = document.getElementById("K02").value;
+    document.getElementById("K13").value = document.getElementById("K03").value;
+  }  
   function dinsdagAlsMaandag() {
-    document.getElementById("tijddi1").value = document.getElementById("tijdma1").value;
-    document.getElementById("tijddi2").value = document.getElementById("tijdma2").value;
-    document.getElementById("tijddi3").value = document.getElementById("tijdma3").value;
-    document.getElementById("tijddi4").value = document.getElementById("tijdma4").value;
-    document.getElementById("kleurdi1").value = document.getElementById("kleurma1").value;
-    document.getElementById("kleurdi2").value = document.getElementById("kleurma2").value;
-    document.getElementById("kleurdi3").value = document.getElementById("kleurma3").value;
-    document.getElementById("intensiteitdi1").value = document.getElementById("intensiteitma1").value;
-    document.getElementById("intensiteitdi2").value = document.getElementById("intensiteitma2").value;
-    document.getElementById("intensiteitdi3").value = document.getElementById("intensiteitma3").value;
+    document.getElementById("T20").value = document.getElementById("T10").value;
+    document.getElementById("T21").value = document.getElementById("T11").value;
+    document.getElementById("T22").value = document.getElementById("T12").value;
+    document.getElementById("T23").value = document.getElementById("T13").value;
+    document.getElementById("K20").value = document.getElementById("K10").value;
+    document.getElementById("K21").value = document.getElementById("K11").value;
+    document.getElementById("K22").value = document.getElementById("K12").value;
+    document.getElementById("K23").value = document.getElementById("K13").value;
   }
   function woensdagAlsDinsdag() {
-    document.getElementById("tijdwo1").value = document.getElementById("tijddi1").value;
-    document.getElementById("tijdwo2").value = document.getElementById("tijddi2").value;
-    document.getElementById("tijdwo3").value = document.getElementById("tijddi3").value;
-    document.getElementById("tijdwo4").value = document.getElementById("tijddi4").value;
-    document.getElementById("kleurwo1").value = document.getElementById("kleurdi1").value;
-    document.getElementById("kleurwo2").value = document.getElementById("kleurdi2").value;
-    document.getElementById("kleurwo3").value = document.getElementById("kleurdi3").value;
-    document.getElementById("intensiteitwo1").value = document.getElementById("intensiteitdi1").value;
-    document.getElementById("intensiteitwo2").value = document.getElementById("intensiteitdi2").value;
-    document.getElementById("intensiteitwo3").value = document.getElementById("intensiteitdi3").value;
+    document.getElementById("T30").value = document.getElementById("T20").value;
+    document.getElementById("T31").value = document.getElementById("T21").value;
+    document.getElementById("T32").value = document.getElementById("T22").value;
+    document.getElementById("T33").value = document.getElementById("T23").value;
+    document.getElementById("K30").value = document.getElementById("K20").value;
+    document.getElementById("K31").value = document.getElementById("K21").value;
+    document.getElementById("K32").value = document.getElementById("K22").value;
+    document.getElementById("K33").value = document.getElementById("K23").value;
   }
   function donderdagAlsWoensdag() {
-    document.getElementById("tijddo1").value = document.getElementById("tijdwo1").value;
-    document.getElementById("tijddo2").value = document.getElementById("tijdwo2").value;
-    document.getElementById("tijddo3").value = document.getElementById("tijdwo3").value;
-    document.getElementById("tijddo4").value = document.getElementById("tijdwo4").value;
-    document.getElementById("kleurdo1").value = document.getElementById("kleurwo1").value;
-    document.getElementById("kleurdo2").value = document.getElementById("kleurwo2").value;
-    document.getElementById("kleurdo3").value = document.getElementById("kleurwo3").value;
-    document.getElementById("intensiteitdo1").value = document.getElementById("intensiteitwo1").value;
-    document.getElementById("intensiteitdo2").value = document.getElementById("intensiteitwo2").value;
-    document.getElementById("intensiteitdo3").value = document.getElementById("intensiteitwo3").value;
+    document.getElementById("T40").value = document.getElementById("T30").value;
+    document.getElementById("T41").value = document.getElementById("T31").value;
+    document.getElementById("T42").value = document.getElementById("T32").value;
+    document.getElementById("T43").value = document.getElementById("T33").value;
+    document.getElementById("K40").value = document.getElementById("K30").value;
+    document.getElementById("K41").value = document.getElementById("K31").value;
+    document.getElementById("K42").value = document.getElementById("K32").value;
+    document.getElementById("K43").value = document.getElementById("K33").value;
   }
   function vrijdagAlsDonderdag() {
-    document.getElementById("tijdvr1").value = document.getElementById("tijddo1").value;
-    document.getElementById("tijdvr2").value = document.getElementById("tijddo2").value;
-    document.getElementById("tijdvr3").value = document.getElementById("tijddo3").value;
-    document.getElementById("tijdvr4").value = document.getElementById("tijddo4").value;
-    document.getElementById("kleurvr1").value = document.getElementById("kleurdo1").value;
-    document.getElementById("kleurvr2").value = document.getElementById("kleurdo2").value;
-    document.getElementById("kleurvr3").value = document.getElementById("kleurdo3").value;
-    document.getElementById("intensiteitvr1").value = document.getElementById("intensiteitdo1").value;
-    document.getElementById("intensiteitvr2").value = document.getElementById("intensiteitdo2").value;
-    document.getElementById("intensiteitvr3").value = document.getElementById("intensiteitdo3").value;
+    document.getElementById("T50").value = document.getElementById("T40").value;
+    document.getElementById("T51").value = document.getElementById("T41").value;
+    document.getElementById("T52").value = document.getElementById("T42").value;
+    document.getElementById("T53").value = document.getElementById("T43").value;
+    document.getElementById("K50").value = document.getElementById("K40").value;
+    document.getElementById("K51").value = document.getElementById("K41").value;
+    document.getElementById("K52").value = document.getElementById("K42").value;
+    document.getElementById("K53").value = document.getElementById("K43").value;
   }
   function zaterdagAlsVrijdag() {
-    document.getElementById("tijdza1").value = document.getElementById("tijdvr1").value;
-    document.getElementById("tijdza2").value = document.getElementById("tijdvr2").value;
-    document.getElementById("tijdza3").value = document.getElementById("tijdvr3").value;
-    document.getElementById("tijdza4").value = document.getElementById("tijdvr4").value;
-    document.getElementById("kleurza1").value = document.getElementById("kleurvr1").value;
-    document.getElementById("kleurza2").value = document.getElementById("kleurvr2").value;
-    document.getElementById("kleurza3").value = document.getElementById("kleurvr3").value;
-    document.getElementById("intensiteitza1").value = document.getElementById("intensiteitvr1").value;
-    document.getElementById("intensiteitza2").value = document.getElementById("intensiteitvr2").value;
-    document.getElementById("intensiteitza3").value = document.getElementById("intensiteitvr3").value;
+    document.getElementById("T60").value = document.getElementById("T50").value;
+    document.getElementById("T61").value = document.getElementById("T51").value;
+    document.getElementById("T62").value = document.getElementById("T52").value;
+    document.getElementById("T63").value = document.getElementById("T53").value;
+    document.getElementById("K60").value = document.getElementById("K50").value;
+    document.getElementById("K61").value = document.getElementById("K51").value;
+    document.getElementById("K62").value = document.getElementById("K52").value;
+    document.getElementById("K63").value = document.getElementById("K53").value;
   }
   function zondagAlsZaterdag() {
-    document.getElementById("tijdzo1").value = document.getElementById("tijdza1").value;
-    document.getElementById("tijdzo2").value = document.getElementById("tijdza2").value;
-    document.getElementById("tijdzo3").value = document.getElementById("tijdza3").value;
-    document.getElementById("tijdzo4").value = document.getElementById("tijdza4").value;
-    document.getElementById("kleurzo1").value = document.getElementById("kleurza1").value;
-    document.getElementById("kleurzo2").value = document.getElementById("kleurza2").value;
-    document.getElementById("kleurzo3").value = document.getElementById("kleurza3").value;
-    document.getElementById("intensiteitzo1").value = document.getElementById("intensiteitza1").value;
-    document.getElementById("intensiteitzo2").value = document.getElementById("intensiteitza2").value;
-    document.getElementById("intensiteitzo3").value = document.getElementById("intensiteitza3").value;
+    document.getElementById("T00").value = document.getElementById("T60").value;
+    document.getElementById("T01").value = document.getElementById("T61").value;
+    document.getElementById("T02").value = document.getElementById("T62").value;
+    document.getElementById("T03").value = document.getElementById("T63").value;
+    document.getElementById("K00").value = document.getElementById("K60").value;
+    document.getElementById("K01").value = document.getElementById("K61").value;
+    document.getElementById("K02").value = document.getElementById("K62").value;
+    document.getElementById("K03").value = document.getElementById("K63").value;
   }  
 </script>  
 </body>
