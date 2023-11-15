@@ -5,6 +5,7 @@
 #include "ATime.h"
 #include "secure.h"
 #include "ALed.h"
+#include "A_OTA.h"
 
 void initWiFi();
 void initSettings();
@@ -16,6 +17,7 @@ bool  mvUserPasswordChanged = false;
 bool  mvOliPasswordChanged  = false;
 bool  mvClearSettings       = false;
 bool  mvStoreScenarios      = false;
+bool  mvOnColorPickerPage   = false;
 
 
 void setup() {
@@ -32,6 +34,7 @@ void setup() {
   if (ATimeInit() == false) {
     ALedError(rtcError);
   }
+  A_OTAInit();  
 }
 
 void loop() {
@@ -45,6 +48,18 @@ void loop() {
     lvTimeSync = false;
   }
 
+  A_OTAHandleOTA();
+
+  // if NTP becomes available sync the RTC - do this once
+  if (lvTimeSync == false) {
+    lvTimeSync = ATimeSync();
+  }
+
+  if (mvOnColorPickerPage == false) {
+    checkTriggers();
+  }
+
+  // handle webserver triggers
   if (mvOliPasswordChanged == true) {
     ASettingStore();
     AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
@@ -70,13 +85,6 @@ void loop() {
     mvStoreScenarios = false;
     ASettingStore();
   }
-
-  // if NTP becomes available sync the RTC - do this once
-  if (lvTimeSync == false) {
-    lvTimeSync = ATimeSync();
-  }
-
-  checkTriggers();
 }
 
 // Callback from webserver, must be short
@@ -138,6 +146,11 @@ void oliStoreScenarios() {
   mvStoreScenarios = true;
 }
 
+// Callback from webserver, must be short
+void oliOnColorPicker(bool fpOnOliPage){
+  mvOnColorPickerPage = fpOnOliPage;
+}
+
 void initWiFi() {
   AWifiInit(OliMdns);
   AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
@@ -177,7 +190,7 @@ void setDefaults() {
 
     mvUserSettings.triggers[i][3].theHour   = 19;       // 19:00
     mvUserSettings.triggers[i][3].theMinute = 0;
-    mvUserSettings.triggers[i][3].theRGB    = 0x048400; // Purple 
+    mvUserSettings.triggers[i][3].theRGB    = 0xE632D2; // Purple 
   }
 }
 

@@ -4,13 +4,50 @@
 #include "AWifi.h"
 #include "ATime.h"
 #include "oli.h"
+#include "ALed.h"
 
 //Include the HTML, STYLE and Script "Pages"
 #include "oli_config.h"
 #include "oli_status.h"
 #include "oli_scenarios.h"
+#include "colorPicker.h"
 
 AsyncWebServer server(80);
+uint32_t mvPickedRGBColor = 0;  // Black
+
+// TODO remove
+// handle the submit button on the Oli Configuration page
+// store the received name-value pairs into the user settings
+// redirect the browser to the oli status webpage
+void submitColor(AsyncWebServerRequest *request) {
+  Serial.println("submitColor");
+  Serial.println(request->args());
+
+  int params = request->params();
+  for (int i = 0; i < params; i++) {
+    AsyncWebParameter *p = request->getParam(i);
+    Serial.print(p->name().c_str());
+    Serial.print("\t");
+    Serial.println(p->value().c_str());
+    if (strcmp(p->name().c_str(), "K10") == 0) {
+
+      char lvStr[10];
+
+      strcpy(lvStr, p->value().c_str());
+      Serial.println(lvStr);
+      if (strlen(lvStr) >= 7) {
+        mvPickedRGBColor = strtoul((const char*)&lvStr[1], NULL, 16);   
+        Serial.print("Color stored:\t");
+        Serial.println(mvPickedRGBColor);
+        ALedSet(mvPickedRGBColor);
+      }
+    }
+  }
+  request->redirect("/colorPicker");
+}
+
+// End TODO
+
 
 // handle the submit button on the Oli Configuration page
 // store the received name-value pairs into the user settings
@@ -67,12 +104,12 @@ void submitConfig(AsyncWebServerRequest *request) {
 // <trigger>  : 0-3 for the 4 triggers
 
 void submitScenario(AsyncWebServerRequest *request) {
-  int   lvWday, lvTrigger, lvHour, lvMin;
-  int   lvColor;
+  int   lvWday, lvTrigger;
   char  lvStr[32];
 
   Serial.println("submitScenario");
   int params = request->params();
+
   for (int i = 0; i < params; i++) {
     AsyncWebParameter *p = request->getParam(i);
     // Serial.print(p->name().c_str());
@@ -109,10 +146,11 @@ void submitScenario(AsyncWebServerRequest *request) {
       if (lvStr[0] == 'K') {
         // Parse the value field, skip the leading '#'
         strcpy(lvStr, p->value().c_str());
+Serial.println(lvStr);
         if (strlen(lvStr) >= 7) {
-          mvUserSettings.triggers[lvWday][lvTrigger].theRGB   = strtol((const char*)&lvStr[1], NULL, 16);   
-//          Serial.print("Color stored:\t");
-//          Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
+          mvUserSettings.triggers[lvWday][lvTrigger].theRGB   = strtoul((const char*)&lvStr[1], NULL, 16);   
+Serial.print("Color stored:\t");
+Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
         }
       }
     } 
@@ -165,33 +203,64 @@ String processorScenario(const String &var) {
   return(String(""));
 }
 
+// The Oli ColorPicker webpage has one dynamic data field to display.
+// We always return the color value of the last picked color in the form #RRGGBB e.g. #E3FE00
+// This function is called by the webserver as we indicated that, see function webserverInit()
+String processorColor(const String &var) {
+  char  lvStr[32];
+
+  sprintf(lvStr, "#%06X", mvPickedRGBColor);
+  return (String(lvStr));
+}
+
 void webserverInit() {
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     Serial.println("root");
+    oliOnColorPicker(false);
     request->send_P(200, "text/html", PAGE_oli_config);
   });
 
   server.on("/config", HTTP_GET, [](AsyncWebServerRequest *request) {
     Serial.println("/config");
+    oliOnColorPicker(false);
     request->send_P(200, "text/html", PAGE_oli_config);
   });
 
   server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request) {
     Serial.println("/status");
+    oliOnColorPicker(false);
     request->send_P(200, "text/html", PAGE_oli_status, processorStatus);        // the processor function replaces %NAME% by some value
   });
 
   server.on("/scenarios", HTTP_GET, [](AsyncWebServerRequest *request) {
     Serial.println("/scenarios");
+    oliOnColorPicker(false);
     request->send_P(200, "text/html", PAGE_oli_scenarios, processorScenario);
+  });
+
+  server.on("/colorPicker", HTTP_GET, [](AsyncWebServerRequest *request) {
+    oliOnColorPicker(true);
+    Serial.println("/colorPicker");
+    request->send_P(200, "text/html", PAGE_oli_color, processorColor);
   });
 
   server.on("/submitConfig", HTTP_POST, submitConfig);
   server.on("/submitScenario", HTTP_POST, submitScenario);
+  server.on("/submitColor", HTTP_POST, submitColor);
 
   server.onNotFound([](AsyncWebServerRequest *request) {
-    Serial.println("Not found");
+    oliOnColorPicker(false);
+    Serial.print("URL not found:\t");
+    Serial.println(request->url());
+    Serial.println("With parameters:");
+    int params = request->params();
+    for (int i = 0; i < params; i++) {
+      AsyncWebParameter *p = request->getParam(i);
+      Serial.print(p->name().c_str());
+      Serial.print("\t");
+      Serial.println(p->value().c_str());
+    }
     request->redirect("/status");
   });
 

@@ -2,7 +2,7 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.5">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="refresh" content="30">
 </head>
 <body>
@@ -23,6 +23,8 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
         <a href="/config">Oli config</a>
         <br>
         <a href="/scenarios">Oli scenarios</a>
+        <br>
+        <a href="/colorPicker">Oli Kleuren tester</a>           
     </fieldset>
 </body>
 </html>

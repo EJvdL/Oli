@@ -7,4 +7,6 @@ void oliSetUserSSID(const char* fpString);
 void oliSetUserPassword(const char* fpString);
 void oliClearSettings();
 void oliStoreScenarios();
+void oliOnColorPicker(bool);
+
 #endif

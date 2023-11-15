@@ -2,7 +2,7 @@ const char PAGE_oli_config[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script>
       function validateForm() {
@@ -51,6 +51,8 @@ const char PAGE_oli_config[] PROGMEM = R"=====(
         <a href="/status">Oli status</a>
         <br>
         <a href="/scenarios">Oli scenarios</a>
+        <br>
+        <a href="/colorPicker">Oli Kleuren tester</a>        
       </fieldset>
     </form>
   </body>

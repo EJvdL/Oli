@@ -2,7 +2,7 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.5">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 <h2>Oli Scenarios</h2>
@@ -12,7 +12,7 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
         <button type="button" onclick="maandagAlsZondag()">Kopieer van zondag</button> <!-- type="button prevents the button from implicitly performing a submit -->
         <br>
         <input type="time" required id="T10" name="T10" value="%T10%" style="width: 5em;">
-        <input type="color" required id="K10" name="K10" value="%K10%">
+        <input type="color" required id="K10" name="K10" value="%K10%"> 
         <br>
         <input type="time" required id="T11" name="T11" value="%T11%" style="width: 5em;">
         <input type="color" required id="K11" name="K11" value="%K11%">
@@ -132,6 +132,8 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
         <a href="/config">Oli config</a>
         <br>
         <a href="/status">Oli status</a>
+        <br>
+        <a href="/colorPicker">Oli Kleuren tester</a>           
     </fieldset>
   </form>
   <script>
