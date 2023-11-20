@@ -1,3 +1,14 @@
+/*
+To connect to the webserver
+http://10.0.0.1/status
+oli.local/status
+
+HW error                15 x blink Red
+OTA error               15 x blink Orange
+Offline (AP mode)       Orange
+Online  (STA mode)      Green
+*/
+
 #include <DS1307RTC.h>    //must be on top... else you get crashing SW...
 #include "ASetting.h"
 #include "AWifi.h"
@@ -23,7 +34,10 @@ bool  mvOnColorPickerPage   = false;
 void setup() {
   Serial.begin(115200);
   while (!Serial) yield();
-  delay(3000);  // if no delay, the output is not always visiblew on the serial monitor.
+  for (int i = 0; i < 6; i++) {       // if no delay, the output is not always visiblew on the serial monitor.
+    Serial.print(".");
+    delay(500);
+  }
   Serial.println();
 
   ALedInit();
@@ -31,8 +45,9 @@ void setup() {
   initSettings();
   initWiFi();
   webserverInit();
+
   if (ATimeInit() == false) {
-    ALedError(rtcError);
+    ALedSetError(oli_HW_error);
   }
   A_OTAInit();  
 }
@@ -61,13 +76,17 @@ void loop() {
 
   // handle webserver triggers
   if (mvOliPasswordChanged == true) {
-    ASettingStore();
+    if (ASettingStore() == false) {
+      Serial.println("Oli Password not saved");
+    }
     AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
     mvOliPasswordChanged  = false;  
   }
   
   if (mvUserSSIDChanged == true && mvUserPasswordChanged == true) {
-    ASettingStore();
+    if (ASettingStore() == false) {
+      Serial.println("SSID not saved");
+    }
     AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
     mvUserSSIDChanged     = false;
     mvUserPasswordChanged = false;
@@ -83,7 +102,15 @@ void loop() {
   
   if (mvStoreScenarios == true) {
     mvStoreScenarios = false;
-    ASettingStore();
+    if (ASettingStore() == false) {
+      Serial.println("Scenario not stored");
+    }
+  }
+
+  if (AWifiGetAPState() == true) { //AP-mode
+    ALedSetStatus(CRGB::Orange);
+  } else {  // STA mode
+      ALedSetStatus(CRGB::Green);
   }
 }
 
@@ -196,7 +223,10 @@ void setDefaults() {
 
 void resetSettingsToDefault() {
   setDefaults();
-  ASettingStore();
+  if (ASettingStore() == false) {
+    Serial.println("Default settings not saved");
+  }
+  ASettingDump();
 }
 
 void checkTriggers() {

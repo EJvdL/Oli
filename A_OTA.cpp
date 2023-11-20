@@ -1,6 +1,7 @@
 #include "A_OTA.h"
 #include "secure.h"
 #include <ArduinoOTA.h>
+#include "ALed.h"
 
 
 void A_OTAInit(){
@@ -10,6 +11,8 @@ void A_OTAInit(){
   ArduinoOTA.onStart([]() {
     Serial.println("Start over the air update");
     digitalWrite(LED_BUILTIN, LOW);  // switch on led
+    ALedOff();
+    ALedSetStatus(CRGB::Black);
   });
 
   ArduinoOTA.onEnd([]() {
@@ -33,13 +36,10 @@ void A_OTAInit(){
       Serial.println("Receive Failed");
     } else if (error == OTA_END_ERROR) {
       Serial.println("End Failed");
-    }    
-    for(int i = 0; i < 5; i++) {
-      digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-      delay(1000);                      // wait for a second
-      digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
-      delay(1000);                      // wait for a second
     }
+
+    ALedSetError(oli_ota_error);
+
     (void)error;
     ESP.restart();
   });

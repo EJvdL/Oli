@@ -99,6 +99,10 @@ bool AWifiHandleWiFi() {
   return (lvResult);
 }
 
+bool AWifiGetAPState() {
+  return (mvAP_active);
+}
+
 const char * AWifiGetSSID() {
   if (mvAP_active != true) {  
     return (mvWifiSSID);

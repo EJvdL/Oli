@@ -7,16 +7,15 @@
 // Timezone info: http://www.hs-help.net/hshelp/gira/v4_7/en/proj_tz.html
 //
 #include <DS1307RTC.h> // is now also included in the main file, else system crashes
-
 #include "ATime.h"
-
 #include <TZ.h> 
-
 #include <Timezone.h>
 
+#define MAX_TIME_STR  (32)
 TimeChangeRule myDST = {"CED", Last, Sun, Mar, 2, +120};      // Daylight time = UTC + 2 hours
 TimeChangeRule mySTD = {"CES", Last, Sun, Oct, 3, +60};       // Standard time = UTC + 1 hour
 Timezone myLocalTimezone(myDST, mySTD);
+char mvTimeStr[MAX_TIME_STR];                      // format: 19 Jan 2023 08:59\0
 
 void initNTP();
 bool initRTC();
@@ -81,7 +80,11 @@ char* ATimeGetTime() {
 
   time_t lvNow = RTC.get();
   lvNow = myLocalTimezone.toLocal(lvNow, &tcr);
-  return ctime(&lvNow);
+  
+  struct tm* lvTmStruct = localtime(&lvNow);
+  strftime(mvTimeStr, MAX_TIME_STR, "%d %b %Y %H:%M", lvTmStruct);
+  return(mvTimeStr);
+//  return ctime(&lvNow);
 }
 
 void ATimeDumpTime() {

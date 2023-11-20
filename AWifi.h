@@ -15,6 +15,7 @@ void  AWifiSetUserCredentials(const char*, const char*);
 bool  AWifiHandleWiFi();
 const char * AWifiGetSSID();
 String AWifiGetIP();
+bool AWifiGetAPState();
 
 // only for unit testing purposes
 extern long int  mvConnectTime;

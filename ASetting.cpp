@@ -41,7 +41,7 @@ bool lvResult = false;
 bool ASettingStore() {
 //  Serial.println("SettingStore");
   mvUserSettings.signature = SETTING_SIGNATURE;              // save the data with our signature
-  EEPROM.put(mvEEAddress, mvUserSettings);                    // save new data in EEPROM, put only updates the bytes that differ from the bytes already in EEPROM
+  EEPROM.put(mvEEAddress, mvUserSettings);                   // save new data in EEPROM, put only updates the bytes that differ from the bytes already in EEPROM
 
 #ifdef ESP8266
   return(EEPROM.commit());
@@ -97,9 +97,12 @@ void  ASettingDump() {
   Serial.println(EEPROM.length());
   Serial.print("EEPROM content:\t");
   for (int i = mvEEAddress; i < mvEEAddress + EEPROM.length(); i++) {
+    if (i % 16 == 0) Serial.println(); 
     byte value = EEPROM.read(i);
-    Serial.print(value, HEX);
-    Serial.print(F(" "));  
+    char buffer[3];
+    sprintf (buffer, "%02X", value);
+    Serial.print(buffer);
+    Serial.print(F(" ")); 
   }
   Serial.println();
   Serial.println(F("--------------------"));

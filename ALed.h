@@ -7,24 +7,15 @@
 #define DATA_PIN  (D3)
 #define LED_TYPE  WS2812
 
-// typedef enum {
-//   purple,
-//   yellow,
-//   green,
-//   off
-// } myColor_t;
-
 typedef enum {
-  noError,          // off
-  rtcError,         // red
-  defaultConfig,    // Orange
-  STAConnected      // Green
+  oli_HW_error,
+  oli_ota_error
 } oli_error_t;
 
-
 void ALedInit();
-void ALedError(oli_error_t);
 void ALedOff();
-void ALedSet(CRGB lvRGB);
+void ALedSet(CRGB);
+void ALedSetStatus(CRGB);
+void ALedSetError(oli_error_t);
 
 #endif
