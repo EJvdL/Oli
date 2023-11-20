@@ -1,10 +1,10 @@
-#ifndef ALED_H
-#define ALED_H
+#ifndef A_UIU_H
+#define A_UI_H
 
+#include "oli.h"
 #include "FastLED.h"
 
 #define NUM_ALL_LEDS  (8)
-#define DATA_PIN  (D3)
 #define LED_TYPE  WS2812
 
 typedef enum {
@@ -17,5 +17,7 @@ void ALedOff();
 void ALedSet(CRGB);
 void ALedSetStatus(CRGB);
 void ALedSetError(oli_error_t);
+void ALedRainbow();
+bool ALedLongPress();
 
 #endif

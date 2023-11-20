@@ -1,6 +1,18 @@
 #ifndef OLI_H
 #define OLI_H
 
+// Pin usage
+  // RTC pins 
+  // SCL  D1
+  // SDA  D2
+  
+  // LED pins
+  #define POWER_LED       (LED_BUILTIN) // = D4
+  #define ALED_DATA_PIN   (D3)
+
+  // Input switch pin
+  #define INPUT_SWITCH    (D5)
+
 void oliSetTime(const char* fpString);
 void oliSetPassword(const char* fpString);
 void oliSetUserSSID(const char* fpString);

@@ -1,16 +1,7 @@
-#include "pixeltypes.h"
-// https://fastled.io/docs/index.html
-
 #include "ALed.h"
 
-CHSV mvPurple = CHSV(184, 170, 200);
-CHSV mvOrange = CHSV(40, 255, 200);
-CHSV mvGreen = CHSV(133, 170, 200);
-CHSV mvRed = CHSV(0, 255, 200);
-CHSV mvBlack = CHSV(0, 0, 0);
-
-
-#define NUM_LEDS (NUM_ALL_LEDS - 1)
+#define NUM_LEDS        (NUM_ALL_LEDS - 1)
+#define DEBOUNCE_TIME   (5000)
 
 CRGB mvAllLEDs[NUM_LEDS];
 
@@ -18,22 +9,20 @@ CRGB* mvStatusLED = &mvAllLEDs[0];
 CRGB* mvLEDs = &mvAllLEDs[1];
 
 void ALedInit() {
+  pinMode(INPUT_SWITCH, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);   // switch off the builtin LED
 
-  FastLED.addLeds<LED_TYPE, DATA_PIN, GRB>(mvAllLEDs, NUM_ALL_LEDS);
+  FastLED.addLeds<WS2812, ALED_DATA_PIN, GRB>(mvAllLEDs, NUM_ALL_LEDS);  // GRB ordering is typical
   FastLED.setBrightness(3);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 250);  // FastLED power management set at 5V, 250mA
 
   ALedSetStatus(CRGB::Black);
-
-  fill_rainbow(mvLEDs, NUM_LEDS, 0, 20);  // Show initial rainbow
-  FastLED.show();
-  FastLED.show();
+  ALedRainbow();
 }
 
 void ALedOff() {
-  fill_solid(mvLEDs, NUM_LEDS, mvBlack);
+  fill_solid(mvLEDs, NUM_LEDS, CRGB::Black);
   FastLED.show();
   FastLED.show();
 }
@@ -74,4 +63,28 @@ void ALedSetError(oli_error_t fpError) {
         break;
       }
   }
+}
+void ALedRainbow() {
+  fill_rainbow(mvLEDs, NUM_LEDS, 0, 20);  // Show initial rainbow
+  FastLED.show();
+  FastLED.show();
+}
+
+bool ALedLongPress() {
+  static unsigned long lvLastPress = 0;
+  static bool lvWaitForTrigger = true;
+  bool lvReturn = false;
+
+  bool lvState = digitalRead(INPUT_SWITCH);
+  if (lvState == true) {    // switched released
+    lvWaitForTrigger = true;
+    lvLastPress = millis();
+  } else {
+    if (lvWaitForTrigger == true && 
+        ((millis() - lvLastPress) > DEBOUNCE_TIME)) {
+      lvWaitForTrigger = false;
+      lvReturn = true;
+    }
+  }
+  return lvReturn;
 }

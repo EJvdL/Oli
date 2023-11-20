@@ -17,6 +17,7 @@ Online  (STA mode)      Green
 #include "secure.h"
 #include "ALed.h"
 #include "A_OTA.h"
+//#include "oli.h"
 
 void initWiFi();
 void initSettings();
@@ -32,6 +33,8 @@ bool  mvOnColorPickerPage   = false;
 
 
 void setup() {
+  ALedInit();
+
   Serial.begin(115200);
   while (!Serial) yield();
   for (int i = 0; i < 6; i++) {       // if no delay, the output is not always visiblew on the serial monitor.
@@ -39,8 +42,6 @@ void setup() {
     delay(500);
   }
   Serial.println();
-
-  ALedInit();
 
   initSettings();
   initWiFi();
@@ -55,9 +56,18 @@ void setup() {
 void loop() {
   static bool lvTimeSync = false;
 
-  if (Serial.parseInt() !=  0) {    // can be used to check if main-loop still runs if web-interface is locked
-    Serial.print(".");
+  if (ALedLongPress() == true) {
+    ALedRainbow();
+    delay(1000);
+    Serial.println("Long press, Now clear the settings");
+    resetSettingsToDefault();
+    AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
+    AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
   }
+  
+  // if (Serial.parseInt() !=  0) {    // can be used to check if main-loop still runs if web-interface is locked
+  //   Serial.print(".");
+  // }
 
   if (AWifiHandleWiFi() == true) {  // Sync again if  a STA connection is made
     lvTimeSync = false;
