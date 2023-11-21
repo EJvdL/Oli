@@ -7,11 +7,11 @@
   // SDA  D2
   
   // LED pins
-  #define POWER_LED       (LED_BUILTIN) // = D4
-  #define ALED_DATA_PIN   (D3)
+  #define POWER_LED         (LED_BUILTIN) // = D4
+  #define ALED_DATA_PIN     (D3)
 
   // Input switch pin
-  #define INPUT_SWITCH    (D5)
+  #define INPUT_SWITCH_PIN  (D5)
 
 void oliSetTime(const char* fpString);
 void oliSetPassword(const char* fpString);

@@ -9,7 +9,7 @@ Offline (AP mode)       Orange
 Online  (STA mode)      Green
 */
 
-#include <DS1307RTC.h>    //must be on top... else you get crashing SW...
+#include <DS1307RTC.h>  //must be on top... else you get crashing SW...
 #include "ASetting.h"
 #include "AWifi.h"
 #include "webserver.h"
@@ -24,20 +24,19 @@ void initSettings();
 void setDefaults();
 void resetSettingsToDefault();
 
-bool  mvUserSSIDChanged     = false;
-bool  mvUserPasswordChanged = false;
-bool  mvOliPasswordChanged  = false;
-bool  mvClearSettings       = false;
-bool  mvStoreScenarios      = false;
-bool  mvOnColorPickerPage   = false;
-
+bool mvUserSSIDChanged = false;
+bool mvUserPasswordChanged = false;
+bool mvOliPasswordChanged = false;
+bool mvClearSettings = false;
+bool mvStoreScenarios = false;
+bool mvOnColorPickerPage = false;
 
 void setup() {
   ALedInit();
 
   Serial.begin(115200);
   while (!Serial) yield();
-  for (int i = 0; i < 6; i++) {       // if no delay, the output is not always visiblew on the serial monitor.
+  for (int i = 0; i < 6; i++) {  // if no delay, the output is not always visiblew on the serial monitor.
     Serial.print(".");
     delay(500);
   }
@@ -50,13 +49,17 @@ void setup() {
   if (ATimeInit() == false) {
     ALedSetError(oli_HW_error);
   }
-  A_OTAInit();  
+  A_OTAInit();
 }
 
 void loop() {
   static bool lvTimeSync = false;
 
-  if (ALedLongPress() == true) {
+  oli_button_press_t lvPress = ALedPress();
+  if (lvPress == short_press) {
+    ALedToggleLightsOff();
+  }
+  if (lvPress == long_press) {
     ALedRainbow();
     delay(1000);
     Serial.println("Long press, Now clear the settings");
@@ -86,26 +89,28 @@ void loop() {
       Serial.println("Oli Password not saved");
     }
     AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
-    mvOliPasswordChanged  = false;  
+    mvOliPasswordChanged = false;
   }
-  
+
   if (mvUserSSIDChanged == true && mvUserPasswordChanged == true) {
     if (ASettingStore() == false) {
       Serial.println("SSID not saved");
     }
     AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
-    mvUserSSIDChanged     = false;
+    mvUserSSIDChanged = false;
     mvUserPasswordChanged = false;
   }
 
   if (mvClearSettings == true) {
     Serial.println("Now clear the settings");
+    ALedRainbow();
     resetSettingsToDefault();
+    delay(1000);
     AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
     AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
     mvClearSettings = false;
   }
-  
+
   if (mvStoreScenarios == true) {
     mvStoreScenarios = false;
     if (ASettingStore() == false) {
@@ -113,10 +118,10 @@ void loop() {
     }
   }
 
-  if (AWifiGetAPState() == true) { //AP-mode
+  if (AWifiGetAPState() == true) {  //AP-mode
     ALedSetStatus(CRGB::Orange);
   } else {  // STA mode
-      ALedSetStatus(CRGB::Green);
+    ALedSetStatus(CRGB::Green);
   }
 }
 
@@ -160,27 +165,27 @@ void oliClearSettings() {
 // Callback from webserver, must be short
 void oliStoreScenarios() {
   // sort the list of triggers on increasing time
-  for (int i = 0; i < 7; i++) {   // sunday to saturday
+  for (int i = 0; i < 7; i++) {  // sunday to saturday
     for (int j = 0; j < 4 - 1; j++) {
       if ((mvUserSettings.triggers[i][j].theHour * 60 + mvUserSettings.triggers[i][j].theMinute) > (mvUserSettings.triggers[i][j + 1].theHour * 60 + mvUserSettings.triggers[i][j + 1].theMinute)) {
-        uint8_t  lvHour    = mvUserSettings.triggers[i][j].theHour;
-        uint8_t  lvMinute  = mvUserSettings.triggers[i][j].theMinute;
-        uint32_t lvRGB     = mvUserSettings.triggers[i][j].theRGB;
-        mvUserSettings.triggers[i][j].theHour   = mvUserSettings.triggers[i][j + 1].theHour;
+        uint8_t lvHour = mvUserSettings.triggers[i][j].theHour;
+        uint8_t lvMinute = mvUserSettings.triggers[i][j].theMinute;
+        uint32_t lvRGB = mvUserSettings.triggers[i][j].theRGB;
+        mvUserSettings.triggers[i][j].theHour = mvUserSettings.triggers[i][j + 1].theHour;
         mvUserSettings.triggers[i][j].theMinute = mvUserSettings.triggers[i][j + 1].theMinute;
-        mvUserSettings.triggers[i][j].theRGB    = mvUserSettings.triggers[i][j + 1].theRGB;
-        mvUserSettings.triggers[i][j + 1].theHour   = lvHour;
+        mvUserSettings.triggers[i][j].theRGB = mvUserSettings.triggers[i][j + 1].theRGB;
+        mvUserSettings.triggers[i][j + 1].theHour = lvHour;
         mvUserSettings.triggers[i][j + 1].theMinute = lvMinute;
-        mvUserSettings.triggers[i][j + 1].theRGB    = lvRGB;
+        mvUserSettings.triggers[i][j + 1].theRGB = lvRGB;
         j = 0;
       }
     }
-  }  
+  }
   mvStoreScenarios = true;
 }
 
 // Callback from webserver, must be short
-void oliOnColorPicker(bool fpOnOliPage){
+void oliOnColorPicker(bool fpOnOliPage) {
   mvOnColorPickerPage = fpOnOliPage;
 }
 
@@ -188,15 +193,15 @@ void initWiFi() {
   AWifiInit(OliMdns);
   AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
   if (strlen(mvUserSettings.userSSID) != 0 && strlen(mvUserSettings.userPassword) != 0) {
-    AWifiSetUserCredentials(mvUserSettings.userSSID ,mvUserSettings.userPassword);
+    AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
   }
 }
 
 void initSettings() {
-  if (ASettingInit() == false) {      // use default values if no values stored in EEPROM
+  if (ASettingInit() == false) {  // use default values if no values stored in EEPROM
     setDefaults();
   }
-  ASettingDump();                     //dump EEPROm values
+  ASettingDump();  //dump EEPROm values
   Serial.println("Current settings: ");
   Serial.println(mvUserSettings.oliPassword);
   Serial.println(mvUserSettings.userSSID);
@@ -208,22 +213,22 @@ void setDefaults() {
   strcpy(mvUserSettings.userSSID, "");
   strcpy(mvUserSettings.userPassword, "");
 
-  for (int i = 0; i < 7; i++) {   // sunday to saturday
-    mvUserSettings.triggers[i][0].theHour   = 6;        // 06:15
+  for (int i = 0; i < 7; i++) {                 // sunday to saturday
+    mvUserSettings.triggers[i][0].theHour = 6;  // 06:15
     mvUserSettings.triggers[i][0].theMinute = 15;
-    mvUserSettings.triggers[i][0].theRGB    = 0x664000; // Orange
+    mvUserSettings.triggers[i][0].theRGB = 0x664000;  // Orange
 
-    mvUserSettings.triggers[i][1].theHour   = 6;        // 06:30
+    mvUserSettings.triggers[i][1].theHour = 6;  // 06:30
     mvUserSettings.triggers[i][1].theMinute = 30;
-    mvUserSettings.triggers[i][1].theRGB    = 0x048400; // Green
+    mvUserSettings.triggers[i][1].theRGB = 0x048400;  // Green
 
-    mvUserSettings.triggers[i][2].theHour   = 8;        // 08:00
+    mvUserSettings.triggers[i][2].theHour = 8;  // 08:00
     mvUserSettings.triggers[i][2].theMinute = 0;
-    mvUserSettings.triggers[i][2].theRGB    = 0x000000; // Black
+    mvUserSettings.triggers[i][2].theRGB = 0x000000;  // Black
 
-    mvUserSettings.triggers[i][3].theHour   = 19;       // 19:00
+    mvUserSettings.triggers[i][3].theHour = 19;  // 19:00
     mvUserSettings.triggers[i][3].theMinute = 0;
-    mvUserSettings.triggers[i][3].theRGB    = 0xE632D2; // Purple 
+    mvUserSettings.triggers[i][3].theRGB = 0xE632D2;  // Purple
   }
 }
 
@@ -236,7 +241,7 @@ void resetSettingsToDefault() {
 }
 
 void checkTriggers() {
-  trigger_time_t  lvTriggerTime = ATimeGetBrokenTime();
+  trigger_time_t lvTriggerTime = ATimeGetBrokenTime();
 
   // convert hour/minute in an integer (60*hour + minute) to get easier comparison
   int lvNow = 60 * lvTriggerTime.theHour + lvTriggerTime.theMinute;
@@ -267,4 +272,3 @@ void checkTriggers() {
     ALedSet(mvUserSettings.triggers[lvTriggerTime.theDay][3].theRGB);
   }
 }
-

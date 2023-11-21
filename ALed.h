@@ -12,12 +12,19 @@ typedef enum {
   oli_ota_error
 } oli_error_t;
 
+typedef enum {
+  short_press,
+  long_press,
+  no_press
+} oli_button_press_t;
+
 void ALedInit();
 void ALedOff();
 void ALedSet(CRGB);
 void ALedSetStatus(CRGB);
 void ALedSetError(oli_error_t);
 void ALedRainbow();
-bool ALedLongPress();
+void ALedToggleLightsOff();
+oli_button_press_t ALedPress();
 
 #endif

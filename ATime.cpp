@@ -82,7 +82,7 @@ char* ATimeGetTime() {
   lvNow = myLocalTimezone.toLocal(lvNow, &tcr);
   
   struct tm* lvTmStruct = localtime(&lvNow);
-  strftime(mvTimeStr, MAX_TIME_STR, "%d %b %Y %H:%M", lvTmStruct);
+  strftime(mvTimeStr, MAX_TIME_STR, "%A %d %b %Y %H:%M", lvTmStruct);
   return(mvTimeStr);
 //  return ctime(&lvNow);
 }

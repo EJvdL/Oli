@@ -26,7 +26,7 @@ void AWifiInit(const char* fpMdns) {
 
   WiFi.mode(WIFI_AP_STA);
 
-  IPAddress lvLocal_IP(10,0,0,1);
+  IPAddress lvLocal_IP(192,168,4,1);
   IPAddress lvSubnetMask(255,255,255,0);
   WiFi.softAPConfig (lvLocal_IP, lvLocal_IP, lvSubnetMask);
 

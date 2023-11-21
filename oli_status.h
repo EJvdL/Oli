@@ -6,7 +6,13 @@ const char PAGE_oli_status[] PROGMEM = R"=====(
 <meta http-equiv="refresh" content="30">
 </head>
 <style>
-table, th, td {
+th, td {
+  width: 500px;
+  border:1px solid black;
+  border-collapse: collapse;  
+}
+
+table {
   border:1px solid black;
   border-collapse: collapse;
 }
@@ -28,8 +34,8 @@ table, th, td {
     <fieldset>
       <table style="width:100%">
       <tr>
-        <th>Status</th>
-        <th>LED</th> 
+        <td><b>Status</b></th>
+        <td><b>LED</b></th> 
       </tr>      
       <tr>
         <td>Hardware fout</td>
@@ -44,6 +50,18 @@ table, th, td {
         <td style="color:green;"><b>Groen</b></td>
       </tr>
       </table>
+      <br>
+      <table style="width:100%">
+      <tr>
+        <td>Schakel alle LEDs uit</td>
+        <td>Schakelaar kort indrukken</td>
+      </tr>      
+      <tr>
+        <td>Reset naar fabrieks instellingen</td>
+        <td>Schakelaar langer dan 5 seconden indrukken</td>
+      </tr>
+      </table>
+      
     </fieldset> 
     <br><br>
     <fieldset>
