@@ -33,9 +33,9 @@ const char PAGE_oli_config[] PROGMEM = R"=====(
       <br><br>
       <fieldset>
         <legend>Gebruik eigen WiFi [optioneel]</legend><br>
-        <label for="ssid">SSID van het thuis netwerk</label><br>
+        <label for="ssid">Naam van het thuis netwerk</label><br>
         <input type="text" id="ssid" name="ssid"><br><br>
-        <label for="pwd">Password van thuis netwerk</label><br>
+        <label for="pwd">Wachtwoord van thuis netwerk</label><br>
         <input type="password" minlength="8" maxlength="32" id="pwd" name="pwd"><br>
       </fieldset>
       <br><br>
