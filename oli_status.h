@@ -11,11 +11,6 @@ th, td {
   border:1px solid black;
   border-collapse: collapse;  
 }
-
-table {
-  border:1px solid black;
-  border-collapse: collapse;
-}
 </style>
 <body>
 <h2>Oli Status</h2>

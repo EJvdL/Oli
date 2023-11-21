@@ -250,7 +250,7 @@ void webserverInit() {
   server.on("/submitColor", HTTP_POST, submitColor);
 
   server.onNotFound([](AsyncWebServerRequest *request) {
-    oliOnColorPicker(false);
+    //oliOnColorPicker(false);
     Serial.print("URL not found:\t");
     Serial.println(request->url());
     Serial.println("With parameters:");
@@ -261,7 +261,9 @@ void webserverInit() {
       Serial.print("\t");
       Serial.println(p->value().c_str());
     }
-    request->redirect("/status");
+    if (strcmp("/favicon.ico", request->url().c_str()) != 0) {
+      request->redirect("/status");
+    }
   });
 
   server.begin();
