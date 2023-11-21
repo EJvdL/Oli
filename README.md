@@ -14,3 +14,5 @@
 * ESPAsyncTCP at version 1.2.4
 * Hash at version 1.0 
 * Wire at version 1.0
+
+QR-codes generated with: https://gratisqrcode.nl
