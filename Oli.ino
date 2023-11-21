@@ -64,10 +64,6 @@ void loop() {
     AWifiSetOliCredentials(OliSSID, mvUserSettings.oliPassword);
     AWifiSetUserCredentials(mvUserSettings.userSSID, mvUserSettings.userPassword);
   }
-  
-  // if (Serial.parseInt() !=  0) {    // can be used to check if main-loop still runs if web-interface is locked
-  //   Serial.print(".");
-  // }
 
   if (AWifiHandleWiFi() == true) {  // Sync again if  a STA connection is made
     lvTimeSync = false;
