@@ -5,7 +5,10 @@
 #include "FastLED.h"
 
 #define NUM_ALL_LEDS  (8)
-#define LED_TYPE  WS2812
+#define LED_TYPE      WS2812
+#define COLOR_ORDER   GRB
+#define BRIGHTNESS    (255)
+
 
 typedef enum {
   oli_HW_error,

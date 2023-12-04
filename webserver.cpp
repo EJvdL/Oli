@@ -36,7 +36,7 @@ void submitColor(AsyncWebServerRequest *request) {
       strcpy(lvStr, p->value().c_str());
       Serial.println(lvStr);
       if (strlen(lvStr) >= 7) {
-        mvPickedRGBColor = strtoul((const char*)&lvStr[1], NULL, 16);   
+        mvPickedRGBColor = strtoul((const char *)&lvStr[1], NULL, 16);
         Serial.print("Color stored:\t");
         Serial.println(mvPickedRGBColor);
         ALedSet(mvPickedRGBColor);
@@ -90,22 +90,22 @@ void submitConfig(AsyncWebServerRequest *request) {
       }
     }
   }
-//  if (ASettingsStore()) Serial.println("Store settings success");
+  //  if (ASettingsStore()) Serial.println("Store settings success");
   request->redirect("/status");
 }
 
 // handle the submit button on the Oli Scenario page
-// Input from webpage tijd name:   <T><dag><trigger> 
+// Input from webpage tijd name:   <T><dag><trigger>
 //                    tijd value:  06:30
-// Input from webpage kleur name:  <K><dag><trigger> 
+// Input from webpage kleur name:  <K><dag><trigger>
 //                    kleur value: #ff6600
 //
 // <dag>      : 0 = zondag, 1 = maandag.... 6 = zaterdag
 // <trigger>  : 0-3 for the 4 triggers
 
 void submitScenario(AsyncWebServerRequest *request) {
-  int   lvWday, lvTrigger;
-  char  lvStr[32];
+  int lvWday, lvTrigger;
+  char lvStr[32];
 
   Serial.println("submitScenario");
   int params = request->params();
@@ -121,42 +121,42 @@ void submitScenario(AsyncWebServerRequest *request) {
     if (strlen(lvStr) >= 3) {
 
       char lvChar = lvStr[1];
-      lvWday      = atoi(&lvChar);
-      lvChar      = lvStr[2];
-      lvTrigger   = atoi(&lvChar);
+      lvWday = atoi(&lvChar);
+      lvChar = lvStr[2];
+      lvTrigger = atoi(&lvChar);
 
-//      Serial.print("wday:\t\t");
-//      Serial.println(lvWday);
-//      Serial.print("trigger#:\t");
-//      Serial.println(lvTrigger);
-      
+      //      Serial.print("wday:\t\t");
+      //      Serial.println(lvWday);
+      //      Serial.print("trigger#:\t");
+      //      Serial.println(lvTrigger);
+
       if (lvStr[0] == 'T') {
         // Parse the value field e.g. '06:15'
-        strcpy(lvStr, p->value().c_str());   
+        strcpy(lvStr, p->value().c_str());
         if (strlen(lvStr) >= 5) {
-          mvUserSettings.triggers[lvWday][lvTrigger].theHour   = (uint8_t)atoi(strtok((char*)lvStr, ":"));
+          mvUserSettings.triggers[lvWday][lvTrigger].theHour = (uint8_t)atoi(strtok((char *)lvStr, ":"));
           mvUserSettings.triggers[lvWday][lvTrigger].theMinute = (uint8_t)atoi(strtok(NULL, ":"));
-//          Serial.print("Time stored:\t");
-//          Serial.print(mvUserSettings.triggers[lvWday][lvTrigger].theHour);
-//          Serial.print(":");
-//          Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theMinute);
+          //          Serial.print("Time stored:\t");
+          //          Serial.print(mvUserSettings.triggers[lvWday][lvTrigger].theHour);
+          //          Serial.print(":");
+          //          Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theMinute);
         }
       }
 
       if (lvStr[0] == 'K') {
         // Parse the value field, skip the leading '#'
         strcpy(lvStr, p->value().c_str());
-Serial.println(lvStr);
+        Serial.println(lvStr);
         if (strlen(lvStr) >= 7) {
-          mvUserSettings.triggers[lvWday][lvTrigger].theRGB   = strtoul((const char*)&lvStr[1], NULL, 16);   
-Serial.print("Color stored:\t");
-Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
+          mvUserSettings.triggers[lvWday][lvTrigger].theRGB = strtoul((const char *)&lvStr[1], NULL, 16);
+          Serial.print("Color stored:\t");
+          Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
         }
       }
-    } 
+    }
   }
   oliStoreScenarios();
-  
+
   request->redirect("/status");
 }
 
@@ -171,7 +171,8 @@ String processorStatus(const String &var) {
     return String(AWifiGetSSID());
   } else if (var == "IP") {
     return (AWifiGetIP());
-  } return String();
+  }
+  return String();
 }
 
 // The Oli Scenario webpage has dynamic data to display.
@@ -179,35 +180,35 @@ String processorStatus(const String &var) {
 // The string %T01% must be replaced by the actual time configured.
 // This function is called by the webserver as we indicated that, see function webserverInit()
 String processorScenario(const String &var) {
-  char  lvStr[32];
+  char lvStr[32];
   strcpy(lvStr, var.c_str());
 
   if (strlen(var.c_str()) >= 3) {
-    char lvChar     = lvStr[1];
-    int lvWday      = atoi(&lvChar);
-    lvChar          = lvStr[2];
-    int lvTrigger   = atoi(&lvChar);
+    char lvChar = lvStr[1];
+    int lvWday = atoi(&lvChar);
+    lvChar = lvStr[2];
+    int lvTrigger = atoi(&lvChar);
 
     if (lvStr[0] == 'T') {
-        sprintf(lvStr, "%02d:%02d",mvUserSettings.triggers[lvWday][lvTrigger].theHour, mvUserSettings.triggers[lvWday][lvTrigger].theMinute);
-//        Serial.println(lvStr);
-        return (String(lvStr));
-      }
-      if (var[0] == 'K') {
-//        Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
-        sprintf(lvStr, "#%06X", mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
-//        Serial.println(lvStr);
-        return (String(lvStr));
-      }
+      sprintf(lvStr, "%02d:%02d", mvUserSettings.triggers[lvWday][lvTrigger].theHour, mvUserSettings.triggers[lvWday][lvTrigger].theMinute);
+      //        Serial.println(lvStr);
+      return (String(lvStr));
+    }
+    if (var[0] == 'K') {
+      //        Serial.println(mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
+      sprintf(lvStr, "#%06X", mvUserSettings.triggers[lvWday][lvTrigger].theRGB);
+      //        Serial.println(lvStr);
+      return (String(lvStr));
+    }
   }
-  return(String(""));
+  return (String(""));
 }
 
 // The Oli ColorPicker webpage has one dynamic data field to display.
 // We always return the color value of the last picked color in the form #RRGGBB e.g. #E3FE00
 // This function is called by the webserver as we indicated that, see function webserverInit()
 String processorColor(const String &var) {
-  char  lvStr[32];
+  char lvStr[32];
 
   sprintf(lvStr, "#%06X", mvPickedRGBColor);
   return (String(lvStr));
@@ -230,7 +231,7 @@ void webserverInit() {
   server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request) {
     Serial.println("/status");
     oliOnColorPicker(false);
-    request->send_P(200, "text/html", PAGE_oli_status, processorStatus);        // the processor function replaces %NAME% by some value
+    request->send_P(200, "text/html", PAGE_oli_status, processorStatus);  // the processor function replaces %NAME% by some value
   });
 
   server.on("/scenarios", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -251,17 +252,17 @@ void webserverInit() {
 
   server.onNotFound([](AsyncWebServerRequest *request) {
     //oliOnColorPicker(false);
-    Serial.print("URL not found:\t");
-    Serial.println(request->url());
-    Serial.println("With parameters:");
-    int params = request->params();
-    for (int i = 0; i < params; i++) {
-      AsyncWebParameter *p = request->getParam(i);
-      Serial.print(p->name().c_str());
-      Serial.print("\t");
-      Serial.println(p->value().c_str());
-    }
-    if (strcmp("/favicon.ico", request->url().c_str()) != 0) {
+    if (strcmp("/favicon.ico", request->url().c_str()) == 0) {  // ignore favicon.ico url requests
+      Serial.print("URL not found:\t");
+      Serial.println(request->url());
+      Serial.println("With parameters:");
+      int params = request->params();
+      for (int i = 0; i < params; i++) {
+        AsyncWebParameter *p = request->getParam(i);
+        Serial.print(p->name().c_str());
+        Serial.print("\t");
+        Serial.println(p->value().c_str());
+      }
       request->redirect("/status");
     }
   });

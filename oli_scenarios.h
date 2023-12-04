@@ -77,7 +77,7 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
     <br>    
     <fieldset>
     <legend>Vrijdag</legend>  
-        <button type="button" onclick="vrijdagAlsdonderdag()">Kopieer van donderdag</button>
+        <button type="button" onclick="vrijdagAlsDonderdag()">Kopieer van donderdag</button>
         <br>    
         <input type="time" required id="T50" name="T50" value="%T50%" style="width: 5em;">
         <input type="color" required id="K50" name="K50" value="%K50%">
@@ -111,8 +111,8 @@ const char PAGE_oli_scenarios[] PROGMEM = R"=====(
     <br>    
     <fieldset>
     <legend>Zondag</legend>  
-        <button type="button" onclick="zondagAlszaterdag()">Kopieer van zaterdag</button>
-        <br>    
+        <button type="button" onclick="zondagAlsZaterdag()">Kopieer van zaterdag</button>
+        <br>
         <input type="time" required id="T00" name="T00" value="%T00%" style="width: 5em;">
         <input type="color" required id="K00" name="K00" value="%K00%">
         <br>

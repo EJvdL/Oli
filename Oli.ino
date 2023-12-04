@@ -213,20 +213,20 @@ void setDefaults() {
   strcpy(mvUserSettings.userSSID, "");
   strcpy(mvUserSettings.userPassword, "");
 
-  for (int i = 0; i < 7; i++) {                 // sunday to saturday
-    mvUserSettings.triggers[i][0].theHour = 6;  // 06:15
+  for (int i = 0; i < 7; i++) {                       // sunday to saturday
+    mvUserSettings.triggers[i][0].theHour = 6;        // 06:15
     mvUserSettings.triggers[i][0].theMinute = 15;
     mvUserSettings.triggers[i][0].theRGB = 0x664000;  // Orange
 
-    mvUserSettings.triggers[i][1].theHour = 6;  // 06:30
+    mvUserSettings.triggers[i][1].theHour = 6;        // 06:30
     mvUserSettings.triggers[i][1].theMinute = 30;
     mvUserSettings.triggers[i][1].theRGB = 0x048400;  // Green
 
-    mvUserSettings.triggers[i][2].theHour = 8;  // 08:00
+    mvUserSettings.triggers[i][2].theHour = 8;        // 08:00
     mvUserSettings.triggers[i][2].theMinute = 0;
     mvUserSettings.triggers[i][2].theRGB = 0x000000;  // Black
 
-    mvUserSettings.triggers[i][3].theHour = 19;  // 19:00
+    mvUserSettings.triggers[i][3].theHour = 19;       // 19:00
     mvUserSettings.triggers[i][3].theMinute = 0;
     mvUserSettings.triggers[i][3].theRGB = 0xE632D2;  // Purple
   }

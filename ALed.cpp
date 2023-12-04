@@ -23,8 +23,8 @@ void ALedInit() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);  // switch off the builtin LED, switch on the LED in the switch
 
-  FastLED.addLeds<WS2812, ALED_DATA_PIN, GRB>(mvAllLEDs, NUM_ALL_LEDS);  // GRB ordering is typical
-  FastLED.setBrightness(3);
+  FastLED.addLeds<LED_TYPE, ALED_DATA_PIN, COLOR_ORDER>(mvAllLEDs, NUM_ALL_LEDS);  // GRB ordering is typical
+  FastLED.setBrightness(BRIGHTNESS);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 250);  // FastLED power management set at 5V, 250mA
 
   ALedSetStatus(CRGB::Black);
